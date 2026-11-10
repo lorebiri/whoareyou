@@ -477,7 +477,7 @@
       var entry = getEntry(getReports(), e164);
       counts.textContent = '';
       VOTES.forEach(function (v) {
-        append(counts, h('li', { class: v.cls }, [h('strong', { text: String(entry.votes[v.id]) }), ' ' + v.label]));
+        append(counts, h('li', { class: 'count-' + v.id }, [h('strong', { text: String(entry.votes[v.id]) }), ' ' + v.label]));
       });
       notesList.textContent = '';
       entry.notes.slice(-5).reverse().forEach(function (n) {
