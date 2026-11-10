@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhoAreYou – Chi mi ha chiamato? Verifica numeri di telefono sconosciuti gratis</title>
+  <meta name="description" content="Ti ha chiamato un numero sconosciuto? Incollalo e scopri subito paese, tipo di linea, operatore e rischio truffa (wangiri, numeri a pagamento, spoofing). Gratis, senza registrazione, l'analisi avviene nel tuo browser.">
+  <link rel="canonical" href="https://lorebiri.github.io/whoareyou/">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1520" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/img/favicon.svg">
+  <link rel="manifest" href="site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:site_name" content="WhoAreYou">
+  <meta property="og:title" content="Chi mi ha chiamato? Verifica gratis un numero sconosciuto">
+  <meta property="og:description" content="Incolla il numero: paese, tipo di linea, rischio truffa e ricerche sul web con un clic. Tutto nel tuo browser.">
+  <meta property="og:url" content="https://lorebiri.github.io/whoareyou/">
+  <meta property="og:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="WhoAreYou, verifica numeri di telefono sconosciuti">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Chi mi ha chiamato? Verifica gratis un numero sconosciuto">
+  <meta name="twitter:description" content="Paese, tipo di linea, rischio truffa e ricerche sul web con un clic. Tutto nel tuo browser.">
+  <meta name="twitter:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://lorebiri.github.io/whoareyou/#website",
+        "url": "https://lorebiri.github.io/whoareyou/",
+        "name": "WhoAreYou",
+        "inLanguage": "it",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://lorebiri.github.io/whoareyou/?n={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://lorebiri.github.io/whoareyou/#app",
+        "name": "WhoAreYou – Chi mi ha chiamato?",
+        "url": "https://lorebiri.github.io/whoareyou/",
+        "description": "Strumento gratuito per verificare numeri di telefono sconosciuti: paese, tipo di linea, operatore, rischio truffa e ricerche sul web. L'analisi avviene nel browser.",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Qualsiasi (browser web)",
+        "browserRequirements": "Richiede JavaScript",
+        "inLanguage": "it",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://lorebiri.github.io/whoareyou/#faq",
+        "inLanguage": "it",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "WhoAreYou è gratuito?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Sì, è completamente gratuito e non richiede registrazione. Puoi verificare tutti i numeri che vuoi." }
+          },
+          {
+            "@type": "Question",
+            "name": "Il numero che cerco viene inviato a un server?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. L'analisi avviene interamente nel tuo browser e il numero non viene inviato a nessun server di WhoAreYou. Solo se scegli di aprire una ricerca sul web, il numero viene passato al sito che hai scelto, come Google o un database di segnalazioni." }
+          },
+          {
+            "@type": "Question",
+            "name": "Posso scoprire il nome di chi mi ha chiamato?",
+            "acceptedAnswer": { "@type": "Answer", "text": "WhoAreYou non consulta elenchi privati degli intestatari, che in Italia sono protetti dal GDPR. Ti mostra paese, tipo di linea e rischi, e con un clic ti porta alle ricerche pubbliche e ai siti dove altre persone potrebbero aver già segnalato lo stesso numero." }
+          },
+          {
+            "@type": "Question",
+            "name": "Cos'è una chiamata wangiri?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Wangiri, in giapponese \"uno squillo e via\", è una truffa in cui un numero internazionale fa squillare il telefono una sola volta per spingerti a richiamare. La chiamata di ritorno verso numeri a tariffa maggiorata può costare diversi euro al minuto. Se non conosci il numero estero, non richiamare." }
+          },
+          {
+            "@type": "Question",
+            "name": "Come capisco se mi chiama un call center di telemarketing?",
+            "acceptedAnswer": { "@type": "Answer", "text": "I call center usano spesso numeri fissi di grandi città o numeri che cambiano a ogni chiamata. Se il numero risulta fisso o VoIP e le ricerche sul web mostrano segnalazioni di telemarketing, probabilmente è una chiamata commerciale. Puoi iscriverti gratuitamente al Registro pubblico delle opposizioni per ridurle." }
+          },
+          {
+            "@type": "Question",
+            "name": "L'operatore mostrato è quello attuale?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No, è l'operatore a cui la numerazione è stata assegnata in origine. Con la portabilità del numero la linea può essere passata a un altro operatore, quindi consideralo un indizio e non una certezza." }
+          },
+          {
+            "@type": "Question",
+            "name": "Dove finiscono le segnalazioni che salvo?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Le segnalazioni (affidabile, spam, truffa) e le note restano solo nella memoria del browser del tuo dispositivo. Nessun altro le vede e puoi cancellarle svuotando i dati del sito." }
+          },
+          {
+            "@type": "Question",
+            "name": "Cosa faccio se ho già richiamato un numero sospetto?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Controlla il credito o la prossima bolletta, chiedi al tuo operatore di bloccare i servizi a sovrapprezzo e le chiamate verso numerazioni speciali, e se hai subito un addebito o hai fornito dati personali presenta una segnalazione alla Polizia Postale." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#cerca">Vai alla ricerca</a>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="./" aria-label="WhoAreYou, home">
+        <img src="assets/img/favicon.svg" alt="" width="28" height="28">
+        <span>WhoAreYou</span>
+      </a>
+      <nav aria-label="Sezioni">
+        <ul class="nav">
+          <li><a href="#come-funziona">Come funziona</a></li>
+          <li><a href="#truffe">Truffe comuni</a></li>
+          <li><a href="#faq">Domande</a></li>
+          <li><a href="#guide">Guide</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="titolo">
+      <div class="radar" aria-hidden="true"><span class="sweep"></span></div>
+      <div class="wrap hero-inner">
+        <h1 id="titolo">Chi mi ha chiamato?</h1>
+        <p class="lede">Incolla il numero sconosciuto che ti ha cercato. Ti diciamo da che paese arriva, che tipo di linea è, quanto è rischioso richiamare e dove indagare sul web.</p>
+
+        <form id="cerca" class="search" role="search" autocomplete="off" novalidate>
+          <label for="numero" class="search-label">Numero di telefono</label>
+          <div class="search-row">
+            <input id="numero" name="n" type="tel" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false"
+                   placeholder="es. +39 333 123 4567" aria-describedby="search-hint" maxlength="40" required>
+            <button type="button" class="btn-ghost paste" id="incolla" hidden aria-label="Incolla dagli appunti">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v2H9zM7 5H5v16h14V5h-2v3H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              <span>Incolla</span>
+            </button>
+            <button type="submit" class="btn-primary" id="indaga">Indaga</button>
+          </div>
+          <p id="search-hint" class="hint">Va bene qualsiasi formato: con o senza +39, spazi, trattini o 0039. Il numero non lascia il tuo browser.</p>
+        </form>
+      </div>
+    </section>
+
+    <section id="esito" class="result-zone wrap" aria-label="Esito dell'analisi" tabindex="-1">
+      <div id="scan" class="scan" hidden aria-hidden="true"></div>
+      <div id="result" aria-live="polite" aria-atomic="false"></div>
+    </section>
+
+    <section id="cronologia" class="wrap history" aria-labelledby="cronologia-titolo" hidden>
+      <div class="history-head">
+        <h2 id="cronologia-titolo">Le tue ultime ricerche</h2>
+        <button type="button" class="btn-link" id="svuota-cronologia">Cancella cronologia</button>
+      </div>
+      <p class="small muted">Salvate solo su questo dispositivo.</p>
+      <ul id="cronologia-lista" class="history-list"></ul>
+    </section>
+
+    <div class="content">
+      <section id="come-funziona" class="wrap block" aria-labelledby="h-come">
+        <h2 id="h-come">Come funziona</h2>
+        <ol class="steps">
+          <li>
+            <h3>Incolla il numero</h3>
+            <p>Copia il numero dal registro chiamate o da un SMS e incollalo nel campo qui sopra, in qualsiasi formato.</p>
+          </li>
+          <li>
+            <h3>Leggi il fascicolo</h3>
+            <p>In un istante ricevi paese, tipo di linea, area o operatore di origine, un punteggio di affidabilità e i segnali che lo motivano.</p>
+          </li>
+          <li>
+            <h3>Indaga sul web</h3>
+            <p>Con un clic apri le ricerche già pronte su motori di ricerca, database di segnalazioni spam, social e app di messaggistica.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="cosa-analizziamo" class="wrap block" aria-labelledby="h-cosa">
+        <h2 id="h-cosa">Cosa analizziamo</h2>
+        <dl class="checks">
+          <div><dt>Paese di provenienza</dt><dd>Dal prefisso internazionale ricaviamo il paese di origine e ti avvisiamo se arriva da aree spesso usate per chiamate a sovrapprezzo.</dd></div>
+          <div><dt>Tipo di linea</dt><dd>Cellulare, fisso, numero verde, numero a pagamento (come l'899), costo condiviso, VoIP o numerazioni per dispositivi.</dd></div>
+          <div><dt>Area e operatore</dt><dd>Per i fissi italiani indichiamo il distretto (06 Roma, 02 Milano…). Per i cellulari l'operatore di assegnazione originario, che può cambiare con la portabilità.</dd></div>
+          <div><dt>Rischio sovrapprezzo e wangiri</dt><dd>Riconosciamo le numerazioni a tariffa maggiorata e i prefissi esteri tipici delle chiamate “squillo e via”.</dd></div>
+          <div><dt>Tracce sul web</dt><dd>Prepariamo le ricerche del numero in tutti i formati in cui potrebbe essere stato scritto, così trovi subito eventuali segnalazioni di altri utenti.</dd></div>
+        </dl>
+      </section>
+
+      <section id="truffe" class="wrap block" aria-labelledby="h-truffe">
+        <h2 id="h-truffe">Le truffe telefoniche più comuni</h2>
+        <div class="scams">
+          <article>
+            <h3>Wangiri</h3>
+            <p>Uno squillo da un numero estero, spesso africano o dell'Est Europa, e poi niente. Se richiami finisci su una linea a tariffa maggiorata. Regola semplice: un numero estero che non conosci non si richiama.</p>
+          </article>
+          <article>
+            <h3>Falso operatore</h3>
+            <p>Qualcuno si presenta come il tuo gestore di luce, gas o telefonia e propone un “adeguamento” o chiede codici e dati. Riaggancia e chiama tu il numero ufficiale scritto in bolletta.</p>
+          </article>
+          <article>
+            <h3>Spoofing</h3>
+            <p>Il numero mostrato è falsificato e può sembrare quello della tua banca o delle forze dell'ordine. Nessuna banca ti chiede password o codici OTP al telefono.</p>
+          </article>
+          <article>
+            <h3>Telemarketing aggressivo</h3>
+            <p>Call center che chiamano a ripetizione da numeri sempre diversi. Puoi opporti iscrivendoti al Registro pubblico delle opposizioni e bloccare i numeri dal telefono.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="faq" class="wrap block" aria-labelledby="h-faq">
+        <h2 id="h-faq">Domande frequenti</h2>
+        <div class="faq">
+          <details>
+            <summary>WhoAreYou è gratuito?</summary>
+            <p>Sì, è completamente gratuito e non richiede registrazione. Puoi verificare tutti i numeri che vuoi.</p>
+          </details>
+          <details>
+            <summary>Il numero che cerco viene inviato a un server?</summary>
+            <p>No. L'analisi avviene interamente nel tuo browser e il numero non viene inviato a nessun server di WhoAreYou. Solo se scegli di aprire una ricerca sul web, il numero viene passato al sito che hai scelto, come Google o un database di segnalazioni.</p>
+          </details>
+          <details>
+            <summary>Posso scoprire il nome di chi mi ha chiamato?</summary>
+            <p>WhoAreYou non consulta elenchi privati degli intestatari, che in Italia sono protetti dal GDPR. Ti mostra paese, tipo di linea e rischi, e con un clic ti porta alle ricerche pubbliche e ai siti dove altre persone potrebbero aver già segnalato lo stesso numero.</p>
+          </details>
+          <details>
+            <summary>Cos'è una chiamata wangiri?</summary>
+            <p>Wangiri, in giapponese "uno squillo e via", è una truffa in cui un numero internazionale fa squillare il telefono una sola volta per spingerti a richiamare. La chiamata di ritorno verso numeri a tariffa maggiorata può costare diversi euro al minuto. Se non conosci il numero estero, non richiamare.</p>
+          </details>
+          <details>
+            <summary>Come capisco se mi chiama un call center di telemarketing?</summary>
+            <p>I call center usano spesso numeri fissi di grandi città o numeri che cambiano a ogni chiamata. Se il numero risulta fisso o VoIP e le ricerche sul web mostrano segnalazioni di telemarketing, probabilmente è una chiamata commerciale. Puoi iscriverti gratuitamente al Registro pubblico delle opposizioni per ridurle.</p>
+          </details>
+          <details>
+            <summary>L'operatore mostrato è quello attuale?</summary>
+            <p>No, è l'operatore a cui la numerazione è stata assegnata in origine. Con la portabilità del numero la linea può essere passata a un altro operatore, quindi consideralo un indizio e non una certezza.</p>
+          </details>
+          <details>
+            <summary>Dove finiscono le segnalazioni che salvo?</summary>
+            <p>Le segnalazioni (affidabile, spam, truffa) e le note restano solo nella memoria del browser del tuo dispositivo. Nessun altro le vede e puoi cancellarle svuotando i dati del sito.</p>
+          </details>
+          <details>
+            <summary>Cosa faccio se ho già richiamato un numero sospetto?</summary>
+            <p>Controlla il credito o la prossima bolletta, chiedi al tuo operatore di bloccare i servizi a sovrapprezzo e le chiamate verso numerazioni speciali, e se hai subito un addebito o hai fornito dati personali presenta una segnalazione alla Polizia Postale.</p>
+          </details>
+        </div>
+      </section>
+
+      <section id="guide" class="wrap block" aria-labelledby="h-guide">
+        <h2 id="h-guide">Guide per difenderti</h2>
+        <ul class="guides">
+          <li>
+            <a href="guide/chiamate-truffa-wangiri.html">
+              <strong>Chiamate truffa wangiri</strong>
+              <span>Come riconoscere gli squilli dall'estero e cosa fare se hai già richiamato.</span>
+            </a>
+          </li>
+          <li>
+            <a href="guide/come-bloccare-telemarketing.html">
+              <strong>Come bloccare il telemarketing</strong>
+              <span>Registro delle opposizioni, blocco sul telefono e diritti che puoi esercitare.</span>
+            </a>
+          </li>
+          <li>
+            <a href="guide/prefissi-internazionali-pericolosi.html">
+              <strong>Prefissi internazionali pericolosi</strong>
+              <span>I prefissi esteri più usati per le chiamate a sovrapprezzo, paese per paese.</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <p class="brand-foot">WhoAreYou</p>
+        <p class="small">I risultati sono indicativi: si basano sulla struttura del numero e su schemi di truffa noti, non su un elenco degli intestatari. Nessun dato viene inviato ai nostri server: l'analisi avviene nel tuo browser.</p>
+      </div>
+      <ul class="foot-links small">
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="guide/chiamate-truffa-wangiri.html">Truffe wangiri</a></li>
+        <li><a href="guide/come-bloccare-telemarketing.html">Bloccare il telemarketing</a></li>
+        <li><a href="guide/prefissi-internazionali-pericolosi.html">Prefissi pericolosi</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <noscript><p class="noscript wrap">Per analizzare un numero serve JavaScript attivo. Le informazioni e le guide qui sotto restano consultabili.</p></noscript>
+
+  <script src="assets/js/analyzer.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
