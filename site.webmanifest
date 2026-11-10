@@ -1,0 +1,19 @@
+{
+  "name": "WhoAreYou – Chi mi ha chiamato?",
+  "short_name": "WhoAreYou",
+  "description": "Analizza un numero di telefono sconosciuto: paese, tipo di linea, rischio truffa e ricerche mirate.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "icons": [
+    {
+      "src": "assets/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

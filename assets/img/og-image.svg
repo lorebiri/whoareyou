@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="WhoAreYou – Chi mi ha chiamato? Scoprilo in un secondo">
+  <defs>
+    <radialGradient id="glow" cx="0.82" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bar" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0b1020"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- radar rings -->
+  <g fill="none" stroke="#22d3ee" stroke-opacity="0.18" stroke-width="2">
+    <circle cx="960" cy="315" r="110"/>
+    <circle cx="960" cy="315" r="190"/>
+    <circle cx="960" cy="315" r="270"/>
+  </g>
+  <path d="M960 315 L1150 210 A220 220 0 0 1 1180 315 Z" fill="#22d3ee" fill-opacity="0.10"/>
+  <circle cx="1090" cy="250" r="9" fill="#f59e0b"/>
+  <circle cx="860" cy="170" r="6" fill="#22d3ee" fill-opacity="0.8"/>
+  <circle cx="1040" cy="470" r="6" fill="#22d3ee" fill-opacity="0.6"/>
+
+  <!-- handset mark -->
+  <g transform="translate(870 225) scale(7.5)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" fill="#22d3ee" stroke="#22d3ee" stroke-width="0.6"/>
+    <path d="M14.6 6.2a4.6 4.6 0 0 1 3.2 3.2" stroke="#f59e0b" stroke-width="1.2"/>
+    <path d="M14.8 1.9a9 9 0 0 1 7.3 7.3" stroke="#f59e0b" stroke-width="1.2"/>
+  </g>
+
+  <!-- text -->
+  <g font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+    <text x="80" y="150" fill="#22d3ee" font-size="30" font-weight="600" letter-spacing="4">ANALISI NUMERI SCONOSCIUTI</text>
+    <text x="80" y="275" fill="#ffffff" font-size="112" font-weight="800" letter-spacing="-2">Who<tspan fill="#22d3ee">Are</tspan>You</text>
+    <rect x="84" y="312" width="200" height="8" rx="4" fill="url(#bar)"/>
+    <text x="80" y="400" fill="#e2e8f0" font-size="46" font-weight="600">Chi mi ha chiamato?</text>
+    <text x="80" y="460" fill="#94a3b8" font-size="40" font-weight="400">Scoprilo in un secondo.</text>
+    <text x="80" y="560" fill="#64748b" font-size="26">Paese · tipo di linea · rischio truffa · ricerche mirate</text>
+  </g>
+</svg>
