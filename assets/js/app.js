@@ -406,6 +406,7 @@
   }
 
   function buildLookups(lookups) {
+    lookups = lookups.filter(function (l) { return l && safeUrl(l.url) !== '#'; });
     var sec = h('section', { class: 'investigate', 'aria-labelledby': 'h-web' });
     var top = topLookups(lookups);
     var note = h('p', { class: 'popup-note small', hidden: true });

@@ -511,9 +511,16 @@ button:disabled { cursor: progress; opacity: 0.7; }
   .search input { flex-basis: 100%; }
   .search .btn-primary { flex: 1 1 auto; padding: 12px 18px; }
   .paste { flex: 0 0 auto; }
-  .identity { grid-template-columns: 1fr; justify-items: start; }
-  .identity .gauge { order: 2; }
-  .identity-main { order: 1; }
+  .identity {
+    grid-template-columns: auto 1fr; column-gap: 16px; row-gap: 0;
+    grid-template-areas: "num num" "nat nat" "gauge stamp";
+  }
+  .identity-main { display: contents; }
+  .identity .number { grid-area: num; }
+  .identity .national { grid-area: nat; }
+  .identity .gauge { grid-area: gauge; width: 96px; }
+  .identity .stamp { grid-area: stamp; justify-self: start; align-self: center; margin: 0; }
+  .gauge-num { font-size: 1.7rem; }
   .dossier-actions { width: 100%; }
   .dossier-actions .btn-ghost { flex: 1 1 0; justify-content: center; }
   .investigate-head .btn-primary { width: 100%; white-space: normal; }
