@@ -431,6 +431,15 @@
     // --- Servizi e numeri brevi 1xx ---
     if (c0 === '1') {
       var p1 = n.slice(0, 3);
+      if (p1 === '199') {
+        // Numero unico nazionale a tariffa specifica: 199 + 6 cifre, costa più di una chiamata normale
+        r.lineType = 'shared_cost';
+        r.lineTypeLabel = 'Numero a tariffa specifica (199)';
+        r.valid = len === 9;
+        if (len === 9) r.national = groupDigits(n);
+        if (!r.valid) r.invalidReason = 'I numeri 199 hanno 9 cifre.';
+        return r;
+      }
       if (p1 === '144' || p1 === '166' || p1 === '178') {
         r.lineType = 'premium';
         r.lineTypeLabel = 'Numerazione a sovrapprezzo storica (' + p1 + ')';
@@ -942,7 +951,9 @@
             break;
           case 'shared_cost':
             signals.push(signal('shared_cost', 'Numero a costo ripartito',
-              'Numerazione aziendale 840/848: se richiami paghi una parte del costo della chiamata.', -10, 'medium'));
+              nsn.slice(0, 3) === '199'
+                ? 'Numerazione 199 a tariffa specifica: richiamare costa più di una normale chiamata, soprattutto dal cellulare.'
+                : 'Numerazione aziendale 840/848: se richiami paghi una parte del costo della chiamata.', -10, 'medium'));
             break;
           case 'premium':
             signals.push(signal('premium_rate', 'Numero a tariffa maggiorata',

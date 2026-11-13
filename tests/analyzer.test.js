@@ -413,6 +413,18 @@ test('numero breve: niente link di messaggistica', function () {
   assert.ok(!lookup(r, 'whatsapp'));
 });
 
+// ---------------------------------------------------------------- Regressioni (debug completo)
+test('numero 199 a tariffa specifica: valido e segnalato come costoso', function () {
+  ['+39 199 123456', '199123456', '199 12 34 56'].forEach(function (n) {
+    var r = W.analyze(n);
+    assertShape(r);
+    assert.strictEqual(r.valid, true, n);
+    assert.strictEqual(r.e164, '+39199123456', n);
+    assert.strictEqual(r.lineType, 'shared_cost', n);
+    assert.ok(r.signals.some(function (s) { return s.id === 'shared_cost' && /199/.test(s.detail); }), n);
+  });
+});
+
 // ---------------------------------------------------------------- Robustezza
 test('nessuna eccezione su input vari', function () {
   ['+', '00', '0', '1', '+39', '+1', '123456789012345678901', '+999 123', '☎ 333 482 9173', '333.482.9173',
