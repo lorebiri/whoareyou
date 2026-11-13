@@ -359,8 +359,10 @@ button:disabled { cursor: progress; opacity: 0.7; }
 .signal:first-child { border-top: 0; padding-top: 4px; }
 .signal p { margin: 0; }
 .signal .icon { margin-top: 2px; }
+.signal > div { min-width: 0; flex: 1; }
 .signal-label { font-weight: 650; }
-.signal-detail { color: var(--muted); font-size: 0.95rem; }
+.signal-detail { color: var(--muted); font-size: 0.95rem; overflow-wrap: anywhere; }
+.signal-label { overflow-wrap: anywhere; }
 .s-high .icon { color: var(--v-pericoloso); }
 .s-medium .icon { color: var(--v-sospetto); }
 .s-low .icon { color: var(--v-neutro); }
@@ -515,7 +517,7 @@ mark.hl { color: var(--ink); border-radius: 3px; padding: 0 2px; -webkit-box-dec
 .defanged { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.95em; user-select: all; }
 .entity-main.defanged { font-size: 1.05rem; }
 .reasons { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: 1rem; }
-.reason { padding-left: 14px; position: relative; color: var(--muted); }
+.reason { padding-left: 14px; position: relative; color: var(--muted); overflow-wrap: anywhere; }
 .reason strong { color: var(--ink); font-weight: 650; }
 .reason::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); }
 .reason.s-high::before { background: var(--v-pericoloso); }
