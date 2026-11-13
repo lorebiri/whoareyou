@@ -6,7 +6,7 @@ Sito pubblicato: <https://lorebiri.github.io/whoareyou/>
 
 ## Funzionalità
 
-- **Analisi di messaggi** (SMS, email, WhatsApp): riconosce i copioni di truffa più diffusi in Italia (finto corriere, finta banca, falso INPS o Agenzia delle Entrate, "Ciao mamma", finti premi…) e i segnali di urgenza, minaccia e richiesta di codici OTP, PIN o password.
+- **Analisi di messaggi** (SMS, email, WhatsApp): riconosce i copioni di truffa più diffusi in Italia (finto corriere, finta banca, falso INPS o Agenzia delle Entrate, "Ciao mamma", finti premi, finto acquirente su Subito e Vinted…) e i segnali di urgenza, minaccia e richiesta di codici OTP, PIN o password.
 - **Parti sospette evidenziate** in una copia di sola lettura del testo.
 - **Cosa c'è nel testo**: link (mostrati in forma sicura e non cliccabili, con rischio e motivi), IBAN (paese e codice di controllo), indirizzi email e numeri di telefono, ciascuno con il suo esito.
 - **Fascicolo dei numeri di telefono** (il vecchio "Chi mi ha chiamato?"): paese, tipo di linea, operatore di origine, rischio wangiri e numeri a pagamento, ricerche sul web con un clic, segnalazioni personali.
@@ -19,7 +19,7 @@ Sito pubblicato: <https://lorebiri.github.io/whoareyou/>
 
 ## Come funziona (e i suoi limiti)
 
-Tutto avviene **lato client**: il JavaScript della pagina analizza il testo o il numero nel browser e nessun dato viene inviato a un server nostro (non ne abbiamo uno). Nessun cookie, nessun tracker.
+Tutto avviene **lato client**: il JavaScript della pagina analizza il testo o il numero nel browser e nessun dato viene inviato a un server nostro (non ne abbiamo uno). Nessun cookie, nessun tracker, nessuna richiesta a siti di terze parti (anche il font è ospitato sul sito) e una Content-Security-Policy che consente solo script e risorse del sito stesso.
 
 Limiti onesti:
 
@@ -37,6 +37,7 @@ Limiti onesti:
 ├── assets/
 │   ├── css/style.css           # Stile dello strumento
 │   ├── css/pages.css           # Stile di guide, privacy e 404
+│   ├── fonts/                  # Font Archivo ospitato sul sito (licenza OFL)
 │   ├── js/analyzer.js          # Motore numeri di telefono (window.WhoAreYou)
 │   ├── js/scamcheck.js         # Motore messaggi, link, IBAN, email (window.ScamCheck)
 │   ├── js/app.js               # Logica UI, cronologia, deep link
@@ -47,6 +48,7 @@ Limiti onesti:
 │   └── prefissi-internazionali-pericolosi.html
 ├── tests/analyzer.test.js      # Test del motore numeri (node)
 ├── tests/scamcheck.test.js     # Test del motore messaggi (node)
+├── tests/browser.test.js       # Test nel browser, facoltativo (Playwright)
 ├── privacy.html
 ├── 404.html
 ├── robots.txt
@@ -71,6 +73,7 @@ Test dei motori di analisi:
 ```bash
 node tests/analyzer.test.js
 node tests/scamcheck.test.js
+node tests/browser.test.js   # facoltativo: serve Playwright con Chromium, altrimenti viene saltato
 ```
 
 > Nota: in locale la pagina `404.html` usa percorsi assoluti `/whoareyou/…` pensati per GitHub Pages, quindi i suoi link funzionano solo una volta pubblicata.

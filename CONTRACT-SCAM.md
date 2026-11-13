@@ -29,7 +29,7 @@ In Node fa `require('./analyzer.js')` (stesso percorso relativo assets/js/) per 
       verdictLabel: string,
       headline: string,                  // una frase semplice, es. "Sembra la truffa del finto corriere."
       scams: Array<{ id: string, label: string, confidence: "bassa"|"media"|"alta",
-                     explanation: string }>,     // copioni riconosciuti (finto_corriere, finta_banca, inps_ade, ciao_mamma, finto_premio, ...)
+                     explanation: string }>,     // copioni riconosciuti (finto_corriere, finta_banca, inps_ade, ciao_mamma, finto_premio, finto_acquirente, ...)
       signals: Array<{ id: string, label: string, detail: string, impact: number,
                        severity: "info"|"low"|"medium"|"high", evidence?: string }>,  // evidence = frammento del testo che ha fatto scattare il segnale
       advice: string[],
