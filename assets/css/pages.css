@@ -58,7 +58,7 @@ img, svg { max-width: 100%; height: auto; }
 .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; color: var(--brand); text-decoration: none; }
 .brand img { width: 32px; height: 32px; }
-.brand span b { color: var(--accent); font-weight: 800; }
+.brand span b { color: var(--accent-strong); font-weight: 800; }
 .header-cta { font-size: .95rem; font-weight: 600; text-decoration: none; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; white-space: nowrap; }
 
 .wrap { max-width: 760px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
