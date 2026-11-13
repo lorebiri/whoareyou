@@ -348,7 +348,8 @@
     'sbs', 'tokyo', 'uno', 'lat', 'surf'];
   var SUSPICIOUS_TLDS_MID = ['info', 'biz', 'online', 'site', 'website', 'space', 'fun', 'store', 'shop', 'life', 'vip', 'work',
     'link', 'services', 'center', 'digital', 'today', 'world', 'best', 'club', 'host', 'press', 'cloud', 'email', 'network',
-    'tech', 'ink', 'wiki', 'asia', 'one', 'run', 'pro', 'cc', 'us.com'];
+    'tech', 'ink', 'wiki', 'asia', 'one', 'run', 'pro', 'cc', 'us.com', 'delivery', 'express', 'company', 'solutions',
+    'agency', 'global', 'zone', 'ltd', 'money', 'cash', 'finance'];
   var SUSPICIOUS_TLDS = SUSPICIOUS_TLDS_HIGH.concat(SUSPICIOUS_TLDS_MID);
 
   /** Hosting gratuiti e costruttori di siti spesso usati per pagine di phishing. */
@@ -356,7 +357,17 @@
     'herokuapp.com', 'blogspot.com', 'wixsite.com', 'weebly.com', '000webhostapp.com', 'glitch.me', 'repl.co', 'ngrok.io',
     'ngrok-free.app', 'duckdns.org', 'azurewebsites.net', 'appspot.com', 'r2.dev', 'surge.sh', 'onrender.com', 'fly.dev',
     'godaddysites.com', 'webflow.io', 'mystrikingly.com', 'square.site', 'jimdosite.com', 'framer.website', 'carrd.co',
-    'ipfs.io', 'dweb.link', 'translate.goog', 'notion.site', 'yolasite.com', 'sites.google.com', 'forms.gle'];
+    'ipfs.io', 'dweb.link', 'translate.goog', 'notion.site', 'yolasite.com', 'sites.google.com', 'forms.gle',
+    'docs.google.com', 'drive.google.com', 'script.google.com', 'storage.googleapis.com', 'firebasestorage.googleapis.com',
+    'forms.office.com', 'sway.office.com', 'onedrive.live.com', '1drv.ms', 'sharepoint.com', 'dropboxusercontent.com'];
+
+  /**
+   * Indirizzi che stanno su domini ufficiali (google.com, office.com, live.com...) ma ospitano
+   * pagine, moduli e file creati da chiunque: molto usati per il phishing, quindi NON sono "ufficiali".
+   */
+  var USER_CONTENT = ['sites.google.com', 'docs.google.com', 'drive.google.com', 'script.google.com', 'forms.gle',
+    'storage.googleapis.com', 'firebasestorage.googleapis.com', 'forms.office.com', 'sway.office.com', 'onedrive.live.com',
+    '1drv.ms', 'translate.goog'];
 
   /** Suffissi a due livelli (registro pubblico semplificato). */
   var MULTI_SUFFIX = ['gov.it', 'edu.it', 'co.uk', 'org.uk', 'gov.uk', 'ac.uk', 'me.uk', 'com.br', 'com.au', 'co.jp', 'co.in',
@@ -373,7 +384,8 @@
     'website space fun work link life vip win bid loan men date review country kim cam su mom lol zip mov beauty hair ' +
     'makeup skin autos boats homes pics best today world store center services digital pw ws app dev page tech cloud ' +
     'email network club host press ink wiki asia pro one run lat uno surf gdn racing stream download party trade ' +
-    'science tv fm ai sh gs am cx la to sm mt cy lu li mc ws biz mobi travel news blog').split(' ');
+    'science tv fm ai sh gs am cx la to sm mt cy lu li mc ws biz mobi travel news blog delivery express company ' +
+    'solutions agency global group zone ltd plus systems management finance money cash').split(' ');
   var BARE_TLD_SET = {};
   BARE_TLDS.forEach(function (t) { BARE_TLD_SET[t] = 1; });
 
@@ -484,7 +496,11 @@
     return res;
   }
 
-  function isIp(host) { return /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || /^[0-9a-f:]+:[0-9a-f:]*$/i.test(host) && host.indexOf(':') >= 0; }
+  /** IP in qualsiasi forma che il browser accetta: 1.2.3.4, IPv6, decimale (3232235777) o esadecimale (0x7f000001). */
+  function isIp(host) {
+    if (/^[0-9a-f:]+:[0-9a-f:]*$/i.test(host) && host.indexOf(':') >= 0) return true;
+    return /^(0x[0-9a-f]+|\d+)(\.(0x[0-9a-f]+|\d+)){0,3}$/i.test(host);
+  }
 
   /**
    * Trova i link nel testo: con schema (anche "hxxp"), con "www.", e domini
@@ -578,7 +594,8 @@
    */
   function extractIbans(text) {
     var s = String(text);
-    var re = /\b([A-Za-z]{2}\d{2}(?:[ \u00a0-]?[A-Za-z0-9]){10,34})/g;
+    // "IT60X05428..." oppure a gruppi all'italiana "IT 60 X 05428 11101 000000123456"
+    var re = /\b([A-Za-z]{2}[ \u00a0]?\d{2}(?:[ \u00a0-]?[A-Za-z0-9]){10,34})/g;
     var items = [];
     var m;
     while ((m = re.exec(s)) !== null) {
@@ -586,6 +603,8 @@
       var cc = cand.slice(0, 2).toUpperCase();
       var L = IBAN_LENGTHS[cc];
       if (!L) { re.lastIndex = m.index + 2; continue; }
+      // con lo spazio dopo il paese serve il codice in maiuscolo ("IT 60"), non parole come "se 12"
+      if (/^[A-Za-z]{2}[ \u00a0]/.test(cand) && cand.slice(0, 2) !== cc) { re.lastIndex = m.index + 2; continue; }
       if (cand.slice(0, 2) !== cc && !/^[a-z]{2}\d{2}[a-z0-9]+$/i.test(cand.replace(/[\s-]/g, ''))) { re.lastIndex = m.index + 2; continue; }
       // Prendi esattamente L caratteri alfanumerici
       var count = 0;
@@ -598,7 +617,8 @@
       var ibanKw = /\b(iban|conto|bonifico|coordinate|beneficiario|intestat)/.test(before);
       if (count < L) {
         var compactShort = cand.replace(/[^A-Za-z0-9]/g, '');
-        if (compactShort.length >= 14 && (ibanKw || cc === 'IT') && /\d{6,}/.test(compactShort)) {
+        // IBAN incompleto: solo se il testo parla di IBAN/conto/bonifico (altrimenti è un codice qualunque)
+        if (compactShort.length >= 14 && ibanKw && /\d{6,}/.test(compactShort)) {
           items.push({ raw: cand.trim(), index: m.index, normalized: compactShort.toUpperCase(), lengthOk: false });
         }
         continue;
@@ -623,7 +643,7 @@
   }
 
   var PHONE_KW_BEFORE = /(tel|telefono|telefonare|telefona|cell|cellulare|chiama|chiamare|chiamaci|chiamami|richiama|richiamare|richiamaci|contatta|contattare|contattaci|contattami|whatsapp|whats app|wa|numero|num|sms|scrivi|scrivimi|scrivere|verde|assistenza|operatore|ufficio|recapito|al n\.|al nr|al numero|nuovo numero|mio numero|questo numero)\b[^0-9]{0,22}$/i;
-  var CODE_KW_BEFORE = /(codice|code|otp|pin|password|ordine|order|ord\.|pratica|fattura|ricevuta|protocollo|tracking|traccia|spedizione|cliente|contratto|rif\.?|riferimento|\bid|cap|importo|totale|carta|conto|iban|matricola|seriale|pod|pdr|prenotazione|biglietto|posizione|verbale|targa|fiscale|tessera|n\.|nr\.?|n°|#|lotto|serie|pacco|collo|avviso|bolletta|abbonamento|utenza|cod\.)\s*[:#°.]*\s*(e|è|di|del|n\.|nr|numero|n°)?\s*[:#°.]*\s*$/i;
+  var CODE_KW_BEFORE = /(p\.? ?iva|partita iva|c\.f\.?|cod\. ?fisc\.?|codice|code|otp|pin|password|ordine|order|ord\.|pratica|fattura|ricevuta|protocollo|tracking|traccia|spedizione|cliente|contratto|rif\.?|riferimento|\bid|cap|importo|totale|carta|conto|iban|matricola|seriale|pod|pdr|prenotazione|biglietto|posizione|verbale|targa|fiscale|tessera|n\.|nr\.?|n°|#|lotto|serie|pacco|collo|avviso|bolletta|abbonamento|utenza|cod\.)\s*[:#°.]*\s*(e|è|di|del|n\.|nr|numero|n°)?\s*[:#°.]*\s*$/i;
 
   /** Forma plausibile di un numero italiano scritto senza prefisso internazionale. */
   function plausibleNational(d, hasKw) {
@@ -737,6 +757,9 @@
    */
   function officialMatch(host) {
     if (!host) return null;
+    for (var u = 0; u < USER_CONTENT.length; u++) {
+      if (endsWithDomain(host, USER_CONTENT[u])) return null;
+    }
     for (var i = 0; i < OFFICIAL_INDEX.length; i++) {
       if (endsWithDomain(host, OFFICIAL_INDEX[i].domain)) return OFFICIAL_INDEX[i];
     }
@@ -871,7 +894,9 @@
       signals.push(sig('url_ip_host', 'Indirizzo IP al posto del nome', 'Il link porta a un indirizzo numerico (' + host + ') invece che al nome di un sito: le aziende serie non lo fanno mai.', -30, 'high', ev));
     }
     if (p.userinfo !== null) {
-      signals.push(sig('url_at_sign', 'Simbolo @ nel link', 'Tutto quello che sta prima della "@" viene ignorato dal browser: "' + p.userinfo.slice(0, 40) + '@" serve solo a ingannare, il sito vero è ' + host + '.', -25, 'high', ev));
+      // "https://www.poste.it@evil.com": un nome di sito prima della @ serve solo a ingannare -> rischio alto
+      var fakeHost = /[a-z0-9-]+\.[a-z]{2,}/i.test(p.userinfo);
+      signals.push(sig('url_at_sign', 'Simbolo @ nel link', 'Tutto quello che sta prima della "@" viene ignorato dal browser: "' + p.userinfo.slice(0, 40) + '@" serve solo a ingannare, il sito vero è ' + host + '.', fakeHost ? -35 : -25, 'high', ev));
     }
     var off = officialMatch(host);
     if (off && p.userinfo === null) {
@@ -1068,7 +1093,7 @@
     urgency: { re: R('(entro (le |i |e non oltre )?(\\d{1,2}|ventiquattro|quarantotto) ?(ore|h|minuti|min)\\b|entro (oggi|domani|stasera|stanotte|mezzanotte|fine giornata|24|48|72)|\\b(24|48|72) ?(ore|h)\\b|immediatamente|urgent|ultimo avviso|ultimo (giorno|richiamo|sollecito)|ultima (possibilita|occasione|chance|notifica|chiamata)|scade (oggi|domani|a breve|tra poco|stasera)|scadra (oggi|domani|a breve|tra)|tempo limitato|al piu presto|prima possibile|\\basap\\b|avviso finale|termine ultimo|(solo|ancora) (poche ore|oggi|pochi minuti)|ultimissim|in tempi brevi|senza ulteriore (preavviso|avviso)|fai presto|sbrigati|\\bsubito\\b)') },
     threat: { re: R('(sospension|\\bsospes[oa]\\b|bloccat|\\bblocco\\b|chiusura (del|dell|definitiva)|(verra|sara|saranno|verranno) ~{0,1}(chius|sospes|bloccat|disattivat|cancellat|eliminat|addebitat|restituit|rispedit|distrutt|applicat|avviat|trasmess|segnalat|inoltrat|pubblicat|inviat)|denunc|querel|procediment[oi] (penal|legal|giudiziar)|azion[ei] legal|sanzion|pignorament|fermo amministrativo|recupero crediti|ufficiale giudiziario|\\barrest|mandato di|indagin|indagat|perderai|perdita (definitiva|del)|definitivamente|rispedit[oa] al mittente|restituit[oa] al mittente|disattivazion|conseguenze (legali|penali)|segnalazione (alle autorita|alla polizia|al crif|in centrale rischi)|\\bcrif\\b|cattivi pagatori|maggiorazion|interessi di mora|riciclaggio|frode in corso)') },
     otp_request: {
-      re: R('(\\b(invi|mand|gir[aio]|inoltr|dimmi|dammi|dic[ai]\\b|dir[eci]|dar[mec]|comunic|rimand|pass[ai]|legg|dett|rifer|condivid|fornisc|fornir|riport|ripet)\\S* ~{0,6}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\bci (comunic|dic|legg|conferm|fornisc|fornir|dett|ripet|invi|mand|gir)\\S* ~{0,4}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\b(mi|ci) (puoi |potresti |puo |potrebbe )?(conferm\\S*|ripet\\S*) ~{0,2}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\bmi (puoi |potresti )?(giri|mandi|invii|dici|dai|passi|scrivi|inoltri|leggi|detti|comunichi|rimandi|riferisci|girare|mandare|inviare|dire|dare|passare|scrivere|inoltrare|leggere|dettare|comunicare) ~{0,4}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\bme lo (puoi |potresti )?(mandi|giri|invii|passi|dici|inoltri|rimandi|scrivi|detti|leggi|comunichi|mandare|girare|inviare|passare|dire|inoltrare|rimandare|scrivere|dettare|leggere|comunicare)|(per sbaglio|per errore) ~{0,8}(codice|sms)|(codice|sms) ~{0,8}(per sbaglio|per errore))'),
+      re: R('(\\b(invi|mand|gir[aio]|inoltr|dimmi|dammi|dic[ai]\\b|dir[eci]|dar[mec]|comunic|rimand|pass[ai]|legg|dett|rifer|condivid|fornisc|fornir|riport|ripet)\\S* ~{0,6}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\bci (comunic|dic|legg|conferm|fornisc|fornir|dett|ripet|invi|mand|gir)\\S* ~{0,4}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\b(mi|ci) (puoi |potresti |puo |potrebbe )?(conferm\\S*|ripet\\S*) ~{0,2}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\bmi (puoi |potresti )?(giri|mandi|invii|dici|dai|passi|scrivi|inoltri|leggi|detti|comunichi|rimandi|riferisci|girare|mandare|inviare|dire|dare|passare|scrivere|inoltrare|leggere|dettare|comunicare) ~{0,4}(otp\\b|pin\\b|password|passw|credenzial|codic[ei] ~{0,2}(verifica|sicurezza|conferma|accesso|otp|sms|whatsapp|attivazione|autorizzazione|cifre|ricevut|arrivat|appena)|codice (che )?(ti |le |vi )?(e |hai |ha |sono )?(arriv|ricev|appena)|codice ~{0,3}sms|codice (a|di) (\\d|sei|6) cifre)|\\b(mi|ci) (serv(e|ono|irebbe|irebbero)|occorr(e|ono)) ~{0,3}(otp\\b|pin\\b|password|passw|credenzial|codic[ei]\\b)|\\bme lo (puoi |potresti )?(mandi|giri|invii|passi|dici|inoltri|rimandi|scrivi|detti|leggi|comunichi|mandare|girare|inviare|passare|dire|inoltrare|rimandare|scrivere|dettare|leggere|comunicare)|(per sbaglio|per errore) ~{0,8}(codice|sms)|(codice|sms) ~{0,8}(per sbaglio|per errore))'),
       negatable: true
     },
     otp_protective: { re: R('(non (comunicar|condivider|divulgar|dar|fornir|rivelar|ceder|inoltrar|girar)|(non|mai) ~{0,3}(chiederemo|chiediamo|chiede|chiedera|chiederanno|richiediamo|richiederemo|chiedono)|mai (comunicare|condividere|fornire|dare|a nessuno)|nessun (operatore|dipendente|addetto)|a nessuno)') },

@@ -423,6 +423,84 @@ testAsync('analyze su input vuoto: livelli "skipped"', function () {
 });
 
 /* ======================================================================
+ * Regressioni trovate nel debug completo (DEBUG-REPORT.md)
+ * ====================================================================== */
+
+test('debug: pagine create dagli utenti su domini di Google/Microsoft NON sono "ufficiali"', function () {
+  ['https://sites.google.com/view/poste-verifica-conto', 'https://docs.google.com/forms/d/e/1FAIpQ/viewform',
+    'https://forms.office.com/r/abc123', 'https://drive.google.com/file/d/abc/view', 'https://storage.googleapis.com/x/poste.html',
+    'https://script.google.com/macros/s/abc/exec', 'https://evil.github.io/poste/'].forEach(function (u) {
+    var r = S.analyzeText(u);
+    assert.strictEqual(r.entities.urls[0].official, null, u + ' segnato come ufficiale');
+    assert.ok(ids(r.signals).indexOf('url_free_hosting') >= 0, u + ' senza segnale hosting gratuito');
+    assert.notStrictEqual(r.verdict, 'affidabile', u);
+  });
+  var m = S.analyzeText('Poste Italiane: il tuo conto è sospeso. Verifica qui: https://sites.google.com/view/poste-login');
+  assert.ok(m.verdict === 'sospetto' || m.verdict === 'pericoloso', 'messaggio con sites.google.com: ' + m.verdict);
+  // il sito stesso e i domini Google normali restano ufficiali
+  assert.ok(S.analyzeText('https://lorebiri.github.io/whoareyou/').entities.urls[0].official);
+  assert.ok(S.analyzeText('https://www.google.com/search?q=x').entities.urls[0].official);
+});
+
+test('debug: richiesta di codice con "mi serve il codice"', function () {
+  ['Sono l\'operatore della tua banca, mi serve il codice che ti è appena arrivato per bloccare il bonifico fraudolento',
+    'Mi serve urgentemente il codice che hai ricevuto via SMS',
+    'Ci serve il codice OTP per completare la verifica'].forEach(function (t) {
+    var r = S.analyzeText(t);
+    assert.ok(ids(r.scams).indexOf('richiesta_codici') >= 0, t);
+    assert.ok(r.verdict === 'sospetto' || r.verdict === 'pericoloso', t + ' -> ' + r.verdict);
+  });
+  // le avvertenze vere non scattano
+  var ok = S.analyzeText('Il tuo codice OTP è 123456. Non serve comunicarlo a nessuno: non ti serve darlo a operatori.');
+  assert.strictEqual(ids(ok.scams).indexOf('richiesta_codici'), -1);
+});
+
+test('debug: domini nudi con estensioni recenti (.delivery, .express...) sono link', function () {
+  var r = S.analyzeText('Il tuo pacco DHL è in attesa. Conferma il tuo indirizzo: dhl-it.delivery');
+  assert.strictEqual(r.entities.urls.length, 1);
+  assert.strictEqual(r.entities.urls[0].risk, 'alto');
+  assert.ok(r.verdict === 'sospetto' || r.verdict === 'pericoloso', r.verdict);
+  assert.strictEqual(I.extractUrls('Spedizione express domani').items.length, 0);
+});
+
+test('debug: IBAN scritto a gruppi italiani "IT 60 X 05428 11101 000000123456"', function () {
+  var r = S.analyzeText('Fai il bonifico su IBAN: IT 60 X 05428 11101 000000123456 entro oggi');
+  assert.strictEqual(r.entities.ibans.length, 1);
+  assert.strictEqual(r.entities.ibans[0].normalized, 'IT60X0542811101000000123456');
+  assert.strictEqual(r.entities.ibans[0].validChecksum, true);
+  assert.strictEqual(r.entities.phones.length, 0, 'pezzi dell\'IBAN presi per telefoni');
+  assert.strictEqual(S.analyzeText('IT 60 X 05428 11101 000000123456').kind, 'iban');
+  assert.strictEqual(S.analyzeText('DE 89 3704 0044 0532 0130 00').kind, 'iban');
+});
+
+test('debug: link con "@" che mette un dominio noto prima della chiocciola = rischio alto', function () {
+  var r = S.analyzeText('https://www.poste.it@evil.com/login');
+  assert.strictEqual(r.entities.urls[0].risk, 'alto');
+  assert.strictEqual(r.verdict, 'pericoloso');
+});
+
+test('debug: P.IVA e codici fiscali numerici non sono numeri di telefono', function () {
+  assert.strictEqual(S.analyzeText('Poste Italiane S.p.A. - Sede legale Viale Europa 190, 00144 Roma. P.IVA 01114601006').entities.phones.length, 0);
+  assert.strictEqual(S.analyzeText('Partita IVA: 01114601006, C.F. 97103880585').entities.phones.length, 0);
+});
+
+test('debug: IP scritti in decimale o esadecimale', function () {
+  ['https://3232235777/login', 'https://0x7f000001/login', 'http://0xC0.0xA8.0x01.0x01/'].forEach(function (u) {
+    var r = S.analyzeText(u);
+    assert.ok(ids(r.signals).indexOf('url_ip_host') >= 0, u);
+    assert.strictEqual(r.entities.urls[0].risk, 'alto', u);
+  });
+});
+
+test('debug: codice "IT" + cifre senza contesto IBAN non è un IBAN errato', function () {
+  var r = S.analyzeText('Codice cliente IT12345678901234');
+  assert.strictEqual(r.entities.ibans.length, 0);
+  assert.strictEqual(r.verdict, 'neutro');
+  // con la parola IBAN un IBAN troncato resta segnalato
+  assert.strictEqual(S.analyzeText('Il mio IBAN è IT6012 3456 7890').entities.ibans.length, 1);
+});
+
+/* ======================================================================
  * Riepilogo
  * ====================================================================== */
 pending.reduce(function (p, f) { return p.then(f); }, Promise.resolve()).then(function () {
