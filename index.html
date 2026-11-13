@@ -2,6 +2,8 @@
 <html lang="it">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>È una truffa? Verifica SMS, link, IBAN e numeri sospetti gratis | WhoAreYou</title>
   <meta name="description" content="Hai ricevuto un SMS, un'email o un messaggio WhatsApp sospetto? Incollalo e scopri subito se è una truffa: finto pacco, Ciao mamma, finta banca, link falsi, IBAN e numeri a rischio. Gratis, senza registrazione, il testo non lascia il tuo dispositivo.">
@@ -30,9 +32,7 @@
   <meta name="twitter:description" content="Incolla il messaggio sospetto e scopri se è una truffa e cosa fare. Tutto nel tuo browser.">
   <meta name="twitter:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&amp;display=swap">
+  <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
 
   <script type="application/ld+json">
