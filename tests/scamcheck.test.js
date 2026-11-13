@@ -519,6 +519,29 @@ test('debug: domini veri di Enel X e della piattaforma SEND non sono sosia', fun
   });
 });
 
+test('debug: "Ciao mamma" senza parola di famiglia ma con numero nuovo + soldi urgenti', function () {
+  var r = S.analyzeText('Ciao amica mia, il mio numero vecchio non funziona più, salva questo. Ho un bonifico da fare urgente mi aiuti?');
+  assert.ok(ids(r.scams).indexOf('ciao_mamma') >= 0, JSON.stringify(ids(r.scams)));
+  assert.ok(r.verdict === 'sospetto' || r.verdict === 'pericoloso', r.verdict);
+  // un vero cambio di numero senza soldi resta neutro
+  assert.strictEqual(S.analyzeText('Ciao a tutti, ho cambiato numero: salvate questo. A presto!').verdict, 'neutro');
+});
+
+test('debug: pacco che "non ha potuto essere consegnato" è un problema di consegna', function () {
+  var r = S.analyzeText('[Poste Italiane] Gentile cliente, il suo pacco non ha potuto essere consegnato. Segua le istruzioni: https://posteitaliane.delivery-it.cc');
+  assert.ok(ids(r.scams).indexOf('finto_corriere') >= 0, JSON.stringify(ids(r.scams)));
+});
+
+test('debug: finto acquirente su Subito/Vinted che manda il link per "ricevere il pagamento"', function () {
+  ['Buongiorno, ho trovato la sua offerta su Subito, la compro subito. Le mando il link per ricevere il pagamento con il corriere.',
+    'Ciao, compro il tuo articolo su Vinted. Ho già pagato, per ricevere i soldi inserisci i dati della tua carta nel modulo che ti mando'].forEach(function (t) {
+    var r = S.analyzeText(t);
+    assert.ok(ids(r.scams).indexOf('finto_acquirente') >= 0, t);
+    assert.ok(r.verdict === 'sospetto' || r.verdict === 'pericoloso', r.verdict);
+  });
+  assert.strictEqual(S.analyzeText('Ciao, ho visto il tuo annuncio su Subito, la bici è ancora disponibile? Posso passare sabato a vederla').verdict, 'neutro');
+});
+
 /* ======================================================================
  * Riepilogo
  * ====================================================================== */
