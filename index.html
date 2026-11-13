@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WhoAreYou – Chi mi ha chiamato? Verifica numeri di telefono sconosciuti gratis</title>
-  <meta name="description" content="Ti ha chiamato un numero sconosciuto? Incollalo e scopri subito paese, tipo di linea, operatore e rischio truffa (wangiri, numeri a pagamento, spoofing). Gratis, senza registrazione, l'analisi avviene nel tuo browser.">
+  <title>È una truffa? Verifica SMS, link, IBAN e numeri sospetti gratis | WhoAreYou</title>
+  <meta name="description" content="Hai ricevuto un SMS, un'email o un messaggio WhatsApp sospetto? Incollalo e scopri subito se è una truffa: finto pacco, Ciao mamma, finta banca, link falsi, IBAN e numeri a rischio. Gratis, senza registrazione, il testo non lascia il tuo dispositivo.">
   <link rel="canonical" href="https://lorebiri.github.io/whoareyou/">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
@@ -18,16 +18,16 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="it_IT">
   <meta property="og:site_name" content="WhoAreYou">
-  <meta property="og:title" content="Chi mi ha chiamato? Verifica gratis un numero sconosciuto">
-  <meta property="og:description" content="Incolla il numero: paese, tipo di linea, rischio truffa e ricerche sul web con un clic. Tutto nel tuo browser.">
+  <meta property="og:title" content="È una truffa? Controlla gratis SMS, link, IBAN e numeri sospetti">
+  <meta property="og:description" content="Incolla il messaggio sospetto: ti diciamo in parole semplici se somiglia a una truffa e cosa fare. Tutto nel tuo browser, il testo non lascia il dispositivo.">
   <meta property="og:url" content="https://lorebiri.github.io/whoareyou/">
   <meta property="og:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="WhoAreYou, verifica numeri di telefono sconosciuti">
+  <meta property="og:image:alt" content="WhoAreYou, controlla se un messaggio o un numero è una truffa">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Chi mi ha chiamato? Verifica gratis un numero sconosciuto">
-  <meta name="twitter:description" content="Paese, tipo di linea, rischio truffa e ricerche sul web con un clic. Tutto nel tuo browser.">
+  <meta name="twitter:title" content="È una truffa? Controlla gratis SMS, link, IBAN e numeri sospetti">
+  <meta name="twitter:description" content="Incolla il messaggio sospetto e scopri se è una truffa e cosa fare. Tutto nel tuo browser.">
   <meta name="twitter:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://lorebiri.github.io/whoareyou/?n={search_term_string}"
+            "urlTemplate": "https://lorebiri.github.io/whoareyou/?q={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         }
@@ -57,15 +57,29 @@
       {
         "@type": "WebApplication",
         "@id": "https://lorebiri.github.io/whoareyou/#app",
-        "name": "WhoAreYou – Chi mi ha chiamato?",
+        "name": "WhoAreYou – È una truffa?",
         "url": "https://lorebiri.github.io/whoareyou/",
-        "description": "Strumento gratuito per verificare numeri di telefono sconosciuti: paese, tipo di linea, operatore, rischio truffa e ricerche sul web. L'analisi avviene nel browser.",
-        "applicationCategory": "UtilityApplication",
+        "description": "Strumento gratuito per capire se un SMS, un'email, un messaggio WhatsApp, un link, un IBAN o un numero di telefono è una truffa. Riconosce i copioni più diffusi in Italia e spiega in parole semplici cosa fare. L'analisi avviene nel browser: il testo non lascia il dispositivo.",
+        "applicationCategory": "SecurityApplication",
         "operatingSystem": "Qualsiasi (browser web)",
         "browserRequirements": "Richiede JavaScript",
         "inLanguage": "it",
         "isAccessibleForFree": true,
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+        "featureList": [
+          "Analisi di SMS, email e messaggi WhatsApp sospetti",
+          "Riconoscimento delle truffe più comuni: finto pacco, Ciao mamma, finta banca, falso INPS o Agenzia delle Entrate, finto premio",
+          "Controllo dei link con indirizzo mostrato in forma sicura",
+          "Verifica del codice di controllo e del paese degli IBAN",
+          "Controllo di indirizzi email e numeri di telefono trovati nel testo",
+          "Segnali di urgenza, minacce e richieste di codici OTP o password",
+          "Fascicolo dei numeri di telefono: paese, tipo di linea, rischio wangiri e ricerche sul web",
+          "Analisi nel browser, senza invio del testo a server"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        }
       },
       {
         "@type": "FAQPage",
@@ -74,43 +88,67 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "WhoAreYou è gratuito?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Sì, è completamente gratuito e non richiede registrazione. Puoi verificare tutti i numeri che vuoi." }
+            "name": "L'SMS del pacco in giacenza è una truffa?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Quasi sempre sì. I corrieri veri non chiedono di pagare spese di giacenza tramite un link in un SMS. Il messaggio porta a un sito falso che ruba i dati della carta. Se aspetti davvero un pacco, controlla lo stato sul sito o sull'app ufficiale del corriere scrivendo tu l'indirizzo."
+            }
           },
           {
             "@type": "Question",
-            "name": "Il numero che cerco viene inviato a un server?",
-            "acceptedAnswer": { "@type": "Answer", "text": "No. L'analisi avviene interamente nel tuo browser e il numero non viene inviato a nessun server di WhoAreYou. Solo se scegli di aprire una ricerca sul web, il numero viene passato al sito che hai scelto, come Google o un database di segnalazioni." }
+            "name": "Cos'è la truffa \"Ciao mamma\" su WhatsApp?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Qualcuno ti scrive da un numero sconosciuto fingendosi tuo figlio o tua figlia: dice di aver cambiato o rotto il telefono e dopo poco chiede un bonifico urgente. Prima di pagare chiama tuo figlio al numero vecchio che conosci, oppure fagli una domanda a cui solo lui sa rispondere."
+            }
           },
           {
             "@type": "Question",
-            "name": "Posso scoprire il nome di chi mi ha chiamato?",
-            "acceptedAnswer": { "@type": "Answer", "text": "WhoAreYou non consulta elenchi privati degli intestatari, che in Italia sono protetti dal GDPR. Ti mostra paese, tipo di linea e rischi, e con un clic ti porta alle ricerche pubbliche e ai siti dove altre persone potrebbero aver già segnalato lo stesso numero." }
+            "name": "La banca mi scrive che il conto è bloccato: cosa faccio?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Non cliccare il link e non chiamare il numero scritto nel messaggio. Le banche non chiedono mai password, PIN o codici OTP via SMS, email o telefono. Apri tu l'app ufficiale o chiama il numero stampato sulla tua carta."
+            }
           },
           {
             "@type": "Question",
-            "name": "Cos'è una chiamata wangiri?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Wangiri, in giapponese \"uno squillo e via\", è una truffa in cui un numero internazionale fa squillare il telefono una sola volta per spingerti a richiamare. La chiamata di ritorno verso numeri a tariffa maggiorata può costare diversi euro al minuto. Se non conosci il numero estero, non richiamare." }
+            "name": "Come riconosco un link falso?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Guarda il nome del sito prima della prima barra: i link truffa usano nomi simili a quelli veri con parole aggiunte (\"verifica\", \"sicurezza\", \"giacenza\"), lettere scambiate, estensioni insolite o servizi che accorciano gli indirizzi. Nel risultato ti mostriamo il link in forma sicura, non cliccabile, con i motivi del rischio."
+            }
           },
           {
             "@type": "Question",
-            "name": "Come capisco se mi chiama un call center di telemarketing?",
-            "acceptedAnswer": { "@type": "Answer", "text": "I call center usano spesso numeri fissi di grandi città o numeri che cambiano a ogni chiamata. Se il numero risulta fisso o VoIP e le ricerche sul web mostrano segnalazioni di telemarketing, probabilmente è una chiamata commerciale. Puoi iscriverti gratuitamente al Registro pubblico delle opposizioni per ridurle." }
+            "name": "Mi hanno chiesto un bonifico su un IBAN: posso fidarmi?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Controlliamo se l'IBAN è scritto correttamente e da quale paese arriva, ma un IBAN valido non dice chi lo possiede. Se te lo chiedono via messaggio con urgenza, se è intestato a un privato o è estero, fermati e verifica con la persona o l'azienda usando un contatto che conosci già."
+            }
           },
           {
             "@type": "Question",
-            "name": "L'operatore mostrato è quello attuale?",
-            "acceptedAnswer": { "@type": "Answer", "text": "No, è l'operatore a cui la numerazione è stata assegnata in origine. Con la portabilità del numero la linea può essere passata a un altro operatore, quindi consideralo un indizio e non una certezza." }
+            "name": "Posso dare il codice OTP che ho ricevuto per SMS?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No, mai. Il codice OTP serve solo a te per confermare un'operazione che stai facendo tu. Chi te lo chiede, anche se dice di essere la banca, le Poste o un operatore, sta cercando di entrare nel tuo conto."
+            }
           },
           {
             "@type": "Question",
-            "name": "Dove finiscono le segnalazioni che salvo?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Le segnalazioni (affidabile, spam, truffa) e le note restano solo nella memoria del browser del tuo dispositivo. Nessun altro le vede e puoi cancellarle svuotando i dati del sito." }
+            "name": "Il testo che incollo viene inviato a qualcuno?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. L'analisi avviene interamente nel tuo browser e il testo non lascia il tuo dispositivo: non lo salviamo e non lo mettiamo nell'indirizzo della pagina. In cronologia restano solo i numeri di telefono che verifichi, sul tuo dispositivo."
+            }
           },
           {
             "@type": "Question",
-            "name": "Cosa faccio se ho già richiamato un numero sospetto?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Controlla il credito o la prossima bolletta, chiedi al tuo operatore di bloccare i servizi a sovrapprezzo e le chiamate verso numerazioni speciali, e se hai subito un addebito o hai fornito dati personali presenta una segnalazione alla Polizia Postale." }
+            "name": "Posso controllare anche chi mi ha chiamato?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sì. Incolla solo il numero sconosciuto: ricevi il fascicolo con paese, tipo di linea, rischio di numeri a pagamento o wangiri e le ricerche già pronte per scoprire se altri lo hanno segnalato."
+            }
           }
         ]
       }
@@ -119,7 +157,7 @@
   </script>
 </head>
 <body>
-  <a class="skip" href="#cerca">Vai alla ricerca</a>
+  <a class="skip" href="#cerca">Vai al controllo</a>
 
   <header class="site-header">
     <div class="wrap header-row">
@@ -142,36 +180,46 @@
     <section class="hero" aria-labelledby="titolo">
       <div class="radar" aria-hidden="true"><span class="sweep"></span></div>
       <div class="wrap hero-inner">
-        <h1 id="titolo">Chi mi ha chiamato?</h1>
-        <p class="lede">Incolla il numero sconosciuto che ti ha cercato. Ti diciamo da che paese arriva, che tipo di linea è, quanto è rischioso richiamare e dove indagare sul web.</p>
+        <h1 id="titolo">È una truffa?</h1>
+        <p class="lede">Hai ricevuto un SMS, un'email o un messaggio WhatsApp che non ti convince? Incollalo qui sotto: ti diciamo in parole semplici se somiglia a una truffa, quali parti sono sospette e cosa fare.</p>
 
         <form id="cerca" class="search" role="search" autocomplete="off" novalidate>
-          <label for="numero" class="search-label">Numero di telefono</label>
+          <label for="testo" class="search-label">Incolla il messaggio, il link, l'IBAN o il numero</label>
+          <textarea id="testo" name="q" rows="4" maxlength="5000" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                    placeholder="es. &quot;Il tuo pacco è in giacenza. Paga 1,99 € entro 24 ore su …&quot;" aria-describedby="search-hint privacy-hint"></textarea>
           <div class="search-row">
-            <input id="numero" name="n" type="tel" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false"
-                   placeholder="es. +39 333 123 4567" aria-describedby="search-hint" maxlength="40" required>
-            <button type="button" class="btn-ghost paste" id="incolla" hidden aria-label="Incolla dagli appunti">
+            <button type="button" class="btn-ghost paste" id="incolla" hidden aria-label="Incolla dagli appunti e analizza">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v2H9zM7 5H5v16h14V5h-2v3H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
               <span>Incolla</span>
             </button>
-            <button type="submit" class="btn-primary" id="indaga">Indaga</button>
+            <span id="contatore" class="counter small muted" aria-hidden="true"></span>
+            <button type="submit" class="btn-primary" id="analizza">Analizza</button>
           </div>
-          <p id="search-hint" class="hint">Va bene qualsiasi formato: con o senza +39, spazi, trattini o 0039. Il numero non lascia il tuo browser.</p>
+          <p id="search-hint" class="hint">Copia tutto il messaggio, così come l'hai ricevuto. Per un numero di telefono va bene qualsiasi formato. <span class="kbd-hint">Invio rapido: <kbd>Ctrl</kbd> + <kbd>Invio</kbd>.</span></p>
+          <p id="privacy-hint" class="privacy-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 10V8a6 6 0 0 1 12 0v2M5 10h14v11H5z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+            <span>Il testo non lascia il tuo dispositivo: l'analisi avviene nel browser.</span>
+          </p>
+          <div class="examples">
+            <p class="examples-label" id="esempi-titolo">Non hai un messaggio sotto mano? Prova un esempio inventato:</p>
+            <ul id="esempi" class="chips" aria-labelledby="esempi-titolo"></ul>
+          </div>
         </form>
       </div>
     </section>
 
     <section id="esito" class="result-zone wrap" aria-label="Esito dell'analisi" tabindex="-1">
       <div id="scan" class="scan" hidden aria-hidden="true"></div>
-      <div id="result" aria-live="polite" aria-atomic="false"></div>
+      <div id="annuncio" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div id="result" aria-busy="false"></div>
     </section>
 
     <section id="cronologia" class="wrap history" aria-labelledby="cronologia-titolo" hidden>
       <div class="history-head">
-        <h2 id="cronologia-titolo">Le tue ultime ricerche</h2>
+        <h2 id="cronologia-titolo">I numeri che hai controllato</h2>
         <button type="button" class="btn-link" id="svuota-cronologia">Cancella cronologia</button>
       </div>
-      <p class="small muted">Salvate solo su questo dispositivo.</p>
+      <p class="small muted">Salvati solo su questo dispositivo. I testi dei messaggi non vengono mai salvati.</p>
       <ul id="cronologia-lista" class="history-list"></ul>
     </section>
 
@@ -180,49 +228,63 @@
         <h2 id="h-come">Come funziona</h2>
         <ol class="steps">
           <li>
-            <h3>Incolla il numero</h3>
-            <p>Copia il numero dal registro chiamate o da un SMS e incollalo nel campo qui sopra, in qualsiasi formato.</p>
+            <h3>Incolla il messaggio</h3>
+            <p>Copia l'SMS, l'email o il messaggio WhatsApp sospetto e incollalo nel campo qui sopra. Vanno bene anche un link, un IBAN o un numero di telefono da soli.</p>
           </li>
           <li>
-            <h3>Leggi il fascicolo</h3>
-            <p>In un istante ricevi paese, tipo di linea, area o operatore di origine, un punteggio di affidabilità e i segnali che lo motivano.</p>
+            <h3>Leggi l'esito</h3>
+            <p>In un istante ricevi un punteggio di affidabilità, il verdetto e una frase semplice che spiega cosa sembra. Le parti sospette del testo vengono evidenziate.</p>
           </li>
           <li>
-            <h3>Indaga sul web</h3>
-            <p>Con un clic apri le ricerche già pronte su motori di ricerca, database di segnalazioni spam, social e app di messaggistica.</p>
+            <h3>Agisci con calma</h3>
+            <p>Segui i consigli pratici: cosa non fare, chi contattare e come verificare usando i canali ufficiali. Nessuna fretta: è proprio quella che cercano i truffatori.</p>
           </li>
         </ol>
       </section>
 
       <section id="cosa-analizziamo" class="wrap block" aria-labelledby="h-cosa">
-        <h2 id="h-cosa">Cosa analizziamo</h2>
+        <h2 id="h-cosa">Cosa controlliamo</h2>
         <dl class="checks">
-          <div><dt>Paese di provenienza</dt><dd>Dal prefisso internazionale ricaviamo il paese di origine e ti avvisiamo se arriva da aree spesso usate per chiamate a sovrapprezzo.</dd></div>
-          <div><dt>Tipo di linea</dt><dd>Cellulare, fisso, numero verde, numero a pagamento (come l'899), costo condiviso, VoIP o numerazioni per dispositivi.</dd></div>
-          <div><dt>Area e operatore</dt><dd>Per i fissi italiani indichiamo il distretto (06 Roma, 02 Milano…). Per i cellulari l'operatore di assegnazione originario, che può cambiare con la portabilità.</dd></div>
-          <div><dt>Rischio sovrapprezzo e wangiri</dt><dd>Riconosciamo le numerazioni a tariffa maggiorata e i prefissi esteri tipici delle chiamate “squillo e via”.</dd></div>
-          <div><dt>Tracce sul web</dt><dd>Prepariamo le ricerche del numero in tutti i formati in cui potrebbe essere stato scritto, così trovi subito eventuali segnalazioni di altri utenti.</dd></div>
+          <div><dt>Copioni di truffa noti</dt><dd>Confrontiamo il testo con le truffe più diffuse in Italia: finto corriere, finta banca, falso INPS o Agenzia delle Entrate, "Ciao mamma", finti premi e rimborsi.</dd></div>
+          <div><dt>Link</dt><dd>Leggiamo il nome del sito e cerchiamo i trucchi tipici: nomi che imitano marchi noti, estensioni insolite, indirizzi accorciati o numerici. Il link non viene mai aperto.</dd></div>
+          <div><dt>IBAN</dt><dd>Verifichiamo che l'IBAN sia scritto correttamente con il codice di controllo e da quale paese arriva, e ti avvisiamo se te lo chiedono in modo sospetto.</dd></div>
+          <div><dt>Urgenza e richieste di codici</dt><dd>Riconosciamo le frasi che mettono fretta o paura e le richieste di password, PIN, codici OTP o dati della carta, che nessun ente serio fa per messaggio.</dd></div>
+          <div><dt>Email e mittenti</dt><dd>Controlliamo gli indirizzi email presenti nel testo, ad esempio domini gratuiti o che imitano quelli di banche e aziende.</dd></div>
+          <div><dt>Numeri di telefono</dt><dd>Per ogni numero trovato nel testo vedi paese, tipo di linea e rischio (numeri a pagamento, prefissi esteri da wangiri). Con un clic apri il fascicolo completo.</dd></div>
         </dl>
       </section>
 
+      <section id="chi-mi-ha-chiamato" class="wrap block" aria-labelledby="h-chiamato">
+        <h2 id="h-chiamato">Chi mi ha chiamato? Controlla anche i numeri</h2>
+        <p>Ti ha cercato un numero sconosciuto o ti è arrivato uno squillo dall'estero? Incolla solo il numero nel campo qui sopra: ricevi il fascicolo con paese, tipo di linea, operatore di origine e rischio truffa, più le ricerche già pronte sui siti di segnalazione per scoprire chi ti ha chiamato secondo gli altri utenti.</p>
+      </section>
+
       <section id="truffe" class="wrap block" aria-labelledby="h-truffe">
-        <h2 id="h-truffe">Le truffe telefoniche più comuni</h2>
+        <h2 id="h-truffe">Le truffe più comuni in Italia</h2>
         <div class="scams">
           <article>
-            <h3>Wangiri</h3>
-            <p>Uno squillo da un numero estero, spesso africano o dell'Est Europa, e poi niente. Se richiami finisci su una linea a tariffa maggiorata. Regola semplice: un numero estero che non conosci non si richiama.</p>
+            <h3>Finto pacco in giacenza</h3>
+            <p>Un SMS a nome di un corriere o delle Poste dice che il pacco è fermo e chiede di pagare pochi euro tramite un link. Il sito è falso e serve a rubare i dati della carta.</p>
           </article>
           <article>
-            <h3>Falso operatore</h3>
-            <p>Qualcuno si presenta come il tuo gestore di luce, gas o telefonia e propone un “adeguamento” o chiede codici e dati. Riaggancia e chiama tu il numero ufficiale scritto in bolletta.</p>
+            <h3>"Ciao mamma" su WhatsApp</h3>
+            <p>Un numero nuovo si presenta come tuo figlio: "ho cambiato telefono". Poco dopo arriva la richiesta di un bonifico urgente. Chiama sempre il numero vecchio prima di pagare.</p>
           </article>
           <article>
-            <h3>Spoofing</h3>
-            <p>Il numero mostrato è falsificato e può sembrare quello della tua banca o delle forze dell'ordine. Nessuna banca ti chiede password o codici OTP al telefono.</p>
+            <h3>Finta banca e phishing</h3>
+            <p>"Accesso anomalo", "conto sospeso": il messaggio ti porta a una pagina identica a quella della banca o ti fa chiamare un falso operatore che chiede codici OTP. La banca non lo fa mai.</p>
           </article>
           <article>
-            <h3>Telemarketing aggressivo</h3>
-            <p>Call center che chiamano a ripetizione da numeri sempre diversi. Puoi opporti iscrivendoti al Registro pubblico delle opposizioni e bloccare i numeri dal telefono.</p>
+            <h3>Falso INPS o Agenzia delle Entrate</h3>
+            <p>Promettono un rimborso o minacciano una sanzione e chiedono di aggiornare i dati con un link. Gli enti pubblici comunicano attraverso i loro siti e l'area riservata, non con link in un SMS.</p>
+          </article>
+          <article>
+            <h3>Finti premi e buoni regalo</h3>
+            <p>"Hai vinto uno smartphone", "buono da 500 euro": basta pagare la spedizione o lasciare i dati. Non c'è nessun premio, solo un addebito o un abbonamento nascosto.</p>
+          </article>
+          <article>
+            <h3>Squilli dall'estero e numeri a pagamento</h3>
+            <p>Uno squillo da un prefisso estero sconosciuto o un invito a richiamare un 899: la chiamata di ritorno può costare diversi euro al minuto. Se non conosci il numero, non richiamare.</p>
           </article>
         </div>
       </section>
@@ -231,36 +293,36 @@
         <h2 id="h-faq">Domande frequenti</h2>
         <div class="faq">
           <details>
-            <summary>WhoAreYou è gratuito?</summary>
-            <p>Sì, è completamente gratuito e non richiede registrazione. Puoi verificare tutti i numeri che vuoi.</p>
+            <summary>L'SMS del pacco in giacenza è una truffa?</summary>
+            <p>Quasi sempre sì. I corrieri veri non chiedono di pagare spese di giacenza tramite un link in un SMS. Il messaggio porta a un sito falso che ruba i dati della carta. Se aspetti davvero un pacco, controlla lo stato sul sito o sull'app ufficiale del corriere scrivendo tu l'indirizzo.</p>
           </details>
           <details>
-            <summary>Il numero che cerco viene inviato a un server?</summary>
-            <p>No. L'analisi avviene interamente nel tuo browser e il numero non viene inviato a nessun server di WhoAreYou. Solo se scegli di aprire una ricerca sul web, il numero viene passato al sito che hai scelto, come Google o un database di segnalazioni.</p>
+            <summary>Cos'è la truffa "Ciao mamma" su WhatsApp?</summary>
+            <p>Qualcuno ti scrive da un numero sconosciuto fingendosi tuo figlio o tua figlia: dice di aver cambiato o rotto il telefono e dopo poco chiede un bonifico urgente. Prima di pagare chiama tuo figlio al numero vecchio che conosci, oppure fagli una domanda a cui solo lui sa rispondere.</p>
           </details>
           <details>
-            <summary>Posso scoprire il nome di chi mi ha chiamato?</summary>
-            <p>WhoAreYou non consulta elenchi privati degli intestatari, che in Italia sono protetti dal GDPR. Ti mostra paese, tipo di linea e rischi, e con un clic ti porta alle ricerche pubbliche e ai siti dove altre persone potrebbero aver già segnalato lo stesso numero.</p>
+            <summary>La banca mi scrive che il conto è bloccato: cosa faccio?</summary>
+            <p>Non cliccare il link e non chiamare il numero scritto nel messaggio. Le banche non chiedono mai password, PIN o codici OTP via SMS, email o telefono. Apri tu l'app ufficiale o chiama il numero stampato sulla tua carta.</p>
           </details>
           <details>
-            <summary>Cos'è una chiamata wangiri?</summary>
-            <p>Wangiri, in giapponese "uno squillo e via", è una truffa in cui un numero internazionale fa squillare il telefono una sola volta per spingerti a richiamare. La chiamata di ritorno verso numeri a tariffa maggiorata può costare diversi euro al minuto. Se non conosci il numero estero, non richiamare.</p>
+            <summary>Come riconosco un link falso?</summary>
+            <p>Guarda il nome del sito prima della prima barra: i link truffa usano nomi simili a quelli veri con parole aggiunte ("verifica", "sicurezza", "giacenza"), lettere scambiate, estensioni insolite o servizi che accorciano gli indirizzi. Nel risultato ti mostriamo il link in forma sicura, non cliccabile, con i motivi del rischio.</p>
           </details>
           <details>
-            <summary>Come capisco se mi chiama un call center di telemarketing?</summary>
-            <p>I call center usano spesso numeri fissi di grandi città o numeri che cambiano a ogni chiamata. Se il numero risulta fisso o VoIP e le ricerche sul web mostrano segnalazioni di telemarketing, probabilmente è una chiamata commerciale. Puoi iscriverti gratuitamente al Registro pubblico delle opposizioni per ridurle.</p>
+            <summary>Mi hanno chiesto un bonifico su un IBAN: posso fidarmi?</summary>
+            <p>Controlliamo se l'IBAN è scritto correttamente e da quale paese arriva, ma un IBAN valido non dice chi lo possiede. Se te lo chiedono via messaggio con urgenza, se è intestato a un privato o è estero, fermati e verifica con la persona o l'azienda usando un contatto che conosci già.</p>
           </details>
           <details>
-            <summary>L'operatore mostrato è quello attuale?</summary>
-            <p>No, è l'operatore a cui la numerazione è stata assegnata in origine. Con la portabilità del numero la linea può essere passata a un altro operatore, quindi consideralo un indizio e non una certezza.</p>
+            <summary>Posso dare il codice OTP che ho ricevuto per SMS?</summary>
+            <p>No, mai. Il codice OTP serve solo a te per confermare un'operazione che stai facendo tu. Chi te lo chiede, anche se dice di essere la banca, le Poste o un operatore, sta cercando di entrare nel tuo conto.</p>
           </details>
           <details>
-            <summary>Dove finiscono le segnalazioni che salvo?</summary>
-            <p>Le segnalazioni (affidabile, spam, truffa) e le note restano solo nella memoria del browser del tuo dispositivo. Nessun altro le vede e puoi cancellarle svuotando i dati del sito.</p>
+            <summary>Il testo che incollo viene inviato a qualcuno?</summary>
+            <p>No. L'analisi avviene interamente nel tuo browser e il testo non lascia il tuo dispositivo: non lo salviamo e non lo mettiamo nell'indirizzo della pagina. In cronologia restano solo i numeri di telefono che verifichi, sul tuo dispositivo.</p>
           </details>
           <details>
-            <summary>Cosa faccio se ho già richiamato un numero sospetto?</summary>
-            <p>Controlla il credito o la prossima bolletta, chiedi al tuo operatore di bloccare i servizi a sovrapprezzo e le chiamate verso numerazioni speciali, e se hai subito un addebito o hai fornito dati personali presenta una segnalazione alla Polizia Postale.</p>
+            <summary>Posso controllare anche chi mi ha chiamato?</summary>
+            <p>Sì. Incolla solo il numero sconosciuto: ricevi il fascicolo con paese, tipo di linea, rischio di numeri a pagamento o wangiri e le ricerche già pronte per scoprire se altri lo hanno segnalato.</p>
           </details>
         </div>
       </section>
@@ -295,7 +357,7 @@
     <div class="wrap footer-grid">
       <div>
         <p class="brand-foot">WhoAreYou</p>
-        <p class="small">I risultati sono indicativi: si basano sulla struttura del numero e su schemi di truffa noti, non su un elenco degli intestatari. Nessun dato viene inviato ai nostri server: l'analisi avviene nel tuo browser.</p>
+        <p class="small">I risultati sono indicativi: si basano su regole e su copioni di truffa noti, non su un elenco di truffatori o di intestatari. Nessun testo viene inviato ai nostri server: l'analisi avviene nel tuo browser. Se pensi di essere stato truffato, contatta subito la tua banca e la Polizia Postale.</p>
       </div>
       <ul class="foot-links small">
         <li><a href="privacy.html">Privacy</a></li>
@@ -308,9 +370,10 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <noscript><p class="noscript wrap">Per analizzare un numero serve JavaScript attivo. Le informazioni e le guide qui sotto restano consultabili.</p></noscript>
+  <noscript><p class="noscript wrap">Per analizzare un messaggio serve JavaScript attivo. Le informazioni e le guide qui sotto restano consultabili.</p></noscript>
 
   <script src="assets/js/analyzer.js" defer></script>
+  <script src="assets/js/scamcheck.js" defer></script>
   <script src="assets/js/app.js" defer></script>
 </body>
 </html>

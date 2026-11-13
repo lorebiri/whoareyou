@@ -1,28 +1,30 @@
-# WhoAreYou – Chi mi ha chiamato?
+# WhoAreYou – È una truffa?
 
-**WhoAreYou** è un sito statico in italiano che ti aiuta a capire chi può esserci dietro un numero di telefono sconosciuto. Incolli il numero e ottieni subito, direttamente nel browser, un'analisi della sua struttura e un punteggio di affidabilità, più una serie di ricerche mirate da lanciare con un clic.
+**WhoAreYou** è un sito statico in italiano che ti aiuta a capire se un messaggio è una truffa. Incolli un SMS, un'email, un messaggio WhatsApp, un link, un IBAN o un numero di telefono e ottieni subito, direttamente nel browser, un'analisi in parole semplici: punteggio di affidabilità, verdetto, truffe riconosciute, parti sospette evidenziate e consigli pratici. Il testo non lascia il tuo dispositivo.
 
 Sito pubblicato: <https://lorebiri.github.io/whoareyou/>
 
 ## Funzionalità
 
-- **Riconoscimento del paese** dal prefisso internazionale (bandiera, nome, prefisso).
-- **Tipo di linea**: cellulare, fisso, numero verde, numero a sovrapprezzo, costo ripartito, VoIP, M2M, numeri brevi.
-- **Indizi sull'operatore** di assegnazione originario (con la nota che la portabilità può averlo cambiato) e area geografica per i fissi italiani.
-- **Rischio truffa**: segnali per numerazioni a sovrapprezzo, prefissi spesso usati nelle truffe *wangiri*, prefissi caraibici che sembrano statunitensi, numerazioni anomale.
+- **Analisi di messaggi** (SMS, email, WhatsApp): riconosce i copioni di truffa più diffusi in Italia (finto corriere, finta banca, falso INPS o Agenzia delle Entrate, "Ciao mamma", finti premi…) e i segnali di urgenza, minaccia e richiesta di codici OTP, PIN o password.
+- **Parti sospette evidenziate** in una copia di sola lettura del testo.
+- **Cosa c'è nel testo**: link (mostrati in forma sicura e non cliccabili, con rischio e motivi), IBAN (paese e codice di controllo), indirizzi email e numeri di telefono, ciascuno con il suo esito.
+- **Fascicolo dei numeri di telefono** (il vecchio "Chi mi ha chiamato?"): paese, tipo di linea, operatore di origine, rischio wangiri e numeri a pagamento, ricerche sul web con un clic, segnalazioni personali.
 - **Punteggio di affidabilità 0–100** con verdetto (affidabile, neutro, sospetto, pericoloso) e consigli pratici.
-- **Ricerche approfondite con un clic** su Google e altri motori, siti di segnalazione (Tellows, ecc.), Truecaller, social network, WhatsApp e fonti ufficiali.
-- **Cronologia e segnalazioni personali** salvate solo sul tuo dispositivo.
-- **Deep link**: `https://lorebiri.github.io/whoareyou/?n=%2B393331234567` avvia subito l'analisi.
+- **Esempi inventati** da provare con un clic.
+- **Cronologia** dei soli numeri di telefono, salvata sul tuo dispositivo. Il testo dei messaggi non viene mai salvato.
+- **Deep link**: `?q=<testo>` (o `#q=`) avvia l'analisi e poi ripulisce l'indirizzo; `?n=%2B393331234567` apre il fascicolo di un numero. Per privacy l'URL viene aggiornato con `?n=` solo per i numeri, mai con il testo di un messaggio.
+- **Livelli di analisi**: oggi "Regole"; il motore prevede livelli aggiuntivi (es. analisi AI) tramite `ScamCheck.registerLayer`.
 - **Guide** su truffa wangiri, blocco del telemarketing e prefissi internazionali a rischio.
 
 ## Come funziona (e i suoi limiti)
 
-Tutto avviene **lato client**: il JavaScript della pagina analizza il numero nel browser e nessun dato viene inviato a un server nostro (non ne abbiamo uno). Nessun cookie, nessun tracker.
+Tutto avviene **lato client**: il JavaScript della pagina analizza il testo o il numero nel browser e nessun dato viene inviato a un server nostro (non ne abbiamo uno). Nessun cookie, nessun tracker.
 
 Limiti onesti:
 
-- Un sito statico **non può interrogare i database a pagamento di identificazione chiamante** né le banche dati degli operatori. WhoAreYou non conosce il nome dell'intestatario.
+- L'analisi dei messaggi si basa su **regole e copioni di truffa noti**: una truffa nuova o scritta bene può sfuggire, e un messaggio vero può avere qualche segnale sospetto. Nel dubbio verifica sempre con i canali ufficiali.
+- Un sito statico **non può interrogare i database a pagamento di identificazione chiamante** né le banche dati degli operatori. WhoAreYou non conosce il nome dell'intestatario di un numero o di un IBAN, e i link non vengono mai aperti.
 - L'analisi si basa sulla **struttura del numero** (prefisso, piano di numerazione, intervalli noti) e su regole euristiche; l'operatore indicato è quello di assegnazione originaria e può essere cambiato per portabilità.
 - Per sapere cosa dicono gli altri utenti, lo strumento **prepara ricerche web mirate** che apri tu: i risultati dipendono dai siti esterni.
 - Il punteggio è indicativo: un prefisso estero non è di per sé una prova di frode.
@@ -35,21 +37,24 @@ Limiti onesti:
 ├── assets/
 │   ├── css/style.css           # Stile dello strumento
 │   ├── css/pages.css           # Stile di guide, privacy e 404
-│   ├── js/analyzer.js          # Motore di analisi (window.WhoAreYou)
+│   ├── js/analyzer.js          # Motore numeri di telefono (window.WhoAreYou)
+│   ├── js/scamcheck.js         # Motore messaggi, link, IBAN, email (window.ScamCheck)
 │   ├── js/app.js               # Logica UI, cronologia, deep link
 │   └── img/                    # favicon.svg, og-image.svg, og-image.png
 ├── guide/
 │   ├── chiamate-truffa-wangiri.html
 │   ├── come-bloccare-telemarketing.html
 │   └── prefissi-internazionali-pericolosi.html
-├── tests/analyzer.test.js      # Test del motore (node)
+├── tests/analyzer.test.js      # Test del motore numeri (node)
+├── tests/scamcheck.test.js     # Test del motore messaggi (node)
 ├── privacy.html
 ├── 404.html
 ├── robots.txt
 ├── sitemap.xml
 ├── site.webmanifest
 ├── .nojekyll                   # Pubblica i file così come sono, senza Jekyll
-└── CONTRACT.md                 # Contratto interno tra i moduli
+├── CONTRACT.md                 # Contratto del motore numeri
+└── CONTRACT-SCAM.md            # Contratto del motore messaggi
 ```
 
 ## Eseguire in locale
@@ -61,10 +66,11 @@ python3 -m http.server 8000
 # poi apri http://localhost:8000/
 ```
 
-Test del motore di analisi:
+Test dei motori di analisi:
 
 ```bash
 node tests/analyzer.test.js
+node tests/scamcheck.test.js
 ```
 
 > Nota: in locale la pagina `404.html` usa percorsi assoluti `/whoareyou/…` pensati per GitHub Pages, quindi i suoi link funzionano solo una volta pubblicata.
@@ -101,7 +107,7 @@ Il file `.nojekyll` evita che GitHub Pages elabori il sito con Jekyll.
 
 ## Privacy
 
-Vedi [privacy.html](privacy.html). In sintesi: l'analisi avviene nel browser; cronologia (`whoareyou:history`) e segnalazioni (`whoareyou:reports`) restano nel `localStorage` del tuo dispositivo e puoi cancellarle quando vuoi.
+Vedi [privacy.html](privacy.html). In sintesi: l'analisi avviene nel browser e il testo dei messaggi non viene salvato né inviato; cronologia dei numeri (`whoareyou:history`) e segnalazioni (`whoareyou:reports`) restano nel `localStorage` del tuo dispositivo e puoi cancellarle quando vuoi.
 
 ## Avvertenze
 

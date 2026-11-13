@@ -1,7 +1,7 @@
 {
-  "name": "WhoAreYou – Chi mi ha chiamato?",
+  "name": "WhoAreYou – È una truffa?",
   "short_name": "WhoAreYou",
-  "description": "Analizza un numero di telefono sconosciuto: paese, tipo di linea, rischio truffa e ricerche mirate.",
+  "description": "Controlla se un SMS, un'email, un messaggio WhatsApp, un link, un IBAN o un numero di telefono è una truffa. L'analisi avviene nel browser.",
   "lang": "it",
   "start_url": "./",
   "scope": "./",
