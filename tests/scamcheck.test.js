@@ -500,6 +500,25 @@ test('debug: codice "IT" + cifre senza contesto IBAN non è un IBAN errato', fun
   assert.strictEqual(S.analyzeText('Il mio IBAN è IT6012 3456 7890').entities.ibans.length, 1);
 });
 
+test('debug: link di pagamento/chat verso privati (paypal.me, wa.me, t.me) non sono "ufficiali"', function () {
+  ['https://paypal.me/mariorossi85', 'https://wa.me/393331234567', 'https://t.me/investimenti_vip', 'https://revolut.me/abc'].forEach(function (u) {
+    var r = S.analyzeText(u);
+    assert.strictEqual(r.entities.urls[0].official, null, u);
+    assert.strictEqual(r.entities.urls[0].lookalike, null, u + ' non è un sosia');
+    assert.ok(ids(r.signals).indexOf('url_personal_link') >= 0, u);
+    assert.notStrictEqual(r.verdict, 'affidabile', u);
+  });
+  var m = S.analyzeText('Ciao mamma, ho cambiato numero. Mandami 500 euro qui: paypal.me/mariorossi85');
+  assert.strictEqual(ids(m.signals).indexOf('links_official'), -1);
+});
+
+test('debug: domini veri di Enel X e della piattaforma SEND non sono sosia', function () {
+  ['https://www.enelx.com/it', 'https://cittadini.notifichedigitali.it'].forEach(function (u) {
+    var r = S.analyzeText(u);
+    assert.ok(r.entities.urls[0].official, u);
+  });
+});
+
 /* ======================================================================
  * Riepilogo
  * ====================================================================== */

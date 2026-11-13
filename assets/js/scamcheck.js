@@ -268,7 +268,7 @@
     { id: 'amex', name: 'American Express', kw: ['americanexpress', 'amex'], domains: ['americanexpress.com', 'americanexpress.it'], text: /\b(american express|amex)\b/ },
     { id: 'inps', name: 'INPS', kw: ['inps'], domains: ['inps.it'], text: /\binps\b/ },
     { id: 'agenziaentrate', name: 'Agenzia delle Entrate', kw: ['agenziaentrate', 'agenziadelleentrate', 'entrate', 'riscossione'], domains: ['agenziaentrate.gov.it', 'agenziaentrateriscossione.gov.it', 'agenziaentrate.it'], text: /\b(agenzia (delle )?entrate|agenziaentrate|riscossione)\b/ },
-    { id: 'pagopa', name: 'PagoPA', kw: ['pagopa'], domains: ['pagopa.gov.it', 'pagopa.it'], text: /\bpago ?pa\b/ },
+    { id: 'pagopa', name: 'PagoPA', kw: ['pagopa'], domains: ['pagopa.gov.it', 'pagopa.it', 'notifichedigitali.it'], text: /\bpago ?pa\b/ },
     { id: 'governo', name: 'Pubblica Amministrazione', kw: ['gov', 'governo', 'ministero', 'spid', 'cie'], domains: ['gov.it', 'italia.it', 'europa.eu'], text: /\b(ministero|governo|app io|spid)\b/ },
     { id: 'telepass', name: 'Telepass', kw: ['telepass'], domains: ['telepass.com', 'telepass.it'], text: /\btelepass\b/ },
     { id: 'autostrade', name: 'Autostrade per l\'Italia', kw: ['autostrade', 'autostradeperlitalia', 'pedaggi', 'pedaggio'], domains: ['autostrade.it', 'movyon.com', 'freetox.it'], text: /\bautostrade\b/ },
@@ -291,7 +291,7 @@
     { id: 'ups', name: 'UPS', kw: ['ups'], domains: ['ups.com'], text: null },
     { id: 'fedex', name: 'FedEx', kw: ['fedex'], domains: ['fedex.com'], text: /\bfedex\b/ },
     { id: 'tnt', name: 'TNT', kw: ['tnt'], domains: ['tnt.it', 'tnt.com'], text: /\btnt\b/ },
-    { id: 'enel', name: 'Enel', kw: ['enel', 'enelenergia'], domains: ['enel.it', 'enel.com'], text: /\benel\b/ },
+    { id: 'enel', name: 'Enel', kw: ['enel', 'enelenergia'], domains: ['enel.it', 'enel.com', 'enelx.com'], text: /\benel\b/ },
     { id: 'eni', name: 'Eni Plenitude', kw: ['plenitude', 'eniplenitude'], domains: ['eniplenitude.com', 'eni.com'], text: /\b(eni plenitude|plenitude)\b/ },
     { id: 'tim', name: 'TIM', kw: ['tim', 'telecomitalia'], domains: ['tim.it', 'telecomitalia.it', 'gruppotim.it', 'timvision.it'], text: /\btim\b/ },
     { id: 'vodafone', name: 'Vodafone', kw: ['vodafone'], domains: ['vodafone.it', 'vodafone.com'], text: /\bvodafone\b/ },
@@ -368,6 +368,17 @@
   var USER_CONTENT = ['sites.google.com', 'docs.google.com', 'drive.google.com', 'script.google.com', 'forms.gle',
     'storage.googleapis.com', 'firebasestorage.googleapis.com', 'forms.office.com', 'sway.office.com', 'onedrive.live.com',
     '1drv.ms', 'translate.goog'];
+
+  /**
+   * Link di pagamento o di chat verso una persona qualsiasi: il sito è vero, ma chi c'è dietro
+   * può essere chiunque (usati nelle truffe "Ciao mamma", finti investimenti su Telegram...).
+   */
+  var PERSONAL_LINKS = ['paypal.me', 'revolut.me', 'wa.me', 't.me', 'm.me'];
+
+  function personalLink(host) {
+    for (var i = 0; i < PERSONAL_LINKS.length; i++) if (endsWithDomain(host, PERSONAL_LINKS[i])) return PERSONAL_LINKS[i];
+    return null;
+  }
 
   /** Suffissi a due livelli (registro pubblico semplificato). */
   var MULTI_SUFFIX = ['gov.it', 'edu.it', 'co.uk', 'org.uk', 'gov.uk', 'ac.uk', 'me.uk', 'com.br', 'com.au', 'co.jp', 'co.in',
@@ -760,6 +771,7 @@
     for (var u = 0; u < USER_CONTENT.length; u++) {
       if (endsWithDomain(host, USER_CONTENT[u])) return null;
     }
+    if (personalLink(host)) return null;
     for (var i = 0; i < OFFICIAL_INDEX.length; i++) {
       if (endsWithDomain(host, OFFICIAL_INDEX[i].domain)) return OFFICIAL_INDEX[i];
     }
@@ -791,7 +803,7 @@
    *   how: "subdomain" | "combo" | "typo" | "homoglyph" | "other_tld"
    */
   function checkBrandLookalike(host) {
-    if (!host || officialMatch(host)) return null;
+    if (!host || officialMatch(host) || personalLink(host)) return null;
     var reg = registrableDomain(host);
     var regLabels = reg.split('.');
     var hostLabels = host.split('.');
@@ -906,6 +918,12 @@
       if (p.scheme === 'http') {
         signals.push(sig('url_no_https', 'Connessione non cifrata', 'Il link usa http:// senza la "s": i dati viaggiano in chiaro.', -3, 'low', ev));
       }
+      return finishUrl(entry);
+    }
+    var personal = p.userinfo === null ? personalLink(host) : null;
+    if (personal) {
+      signals.push(sig('url_personal_link', 'Link verso un privato', host + ' apre un pagamento o una chat con una persona qualsiasi: il sito è vero, ma non ti dice chi c\'è dall\'altra parte. Paga o scrivi solo a chi conosci già.', -5, 'low', ev));
+      if (p.scheme === 'http') signals.push(sig('url_no_https', 'Connessione non cifrata', 'Il link usa http:// senza la "s": i dati viaggiano in chiaro.', -3, 'low', ev));
       return finishUrl(entry);
     }
     var regd = registrableDomain(host);
