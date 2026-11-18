@@ -1,5 +1,7 @@
-/* WhoAreYou – interfaccia. Vanilla JS, nessuna dipendenza.
- * Usa window.WhoAreYou.analyze (assets/js/analyzer.js) secondo CONTRACT.md. */
+/* WhoAreYou – interfaccia di "È una truffa?". Vanilla JS, nessuna dipendenza.
+ * Usa window.ScamCheck.analyze (assets/js/scamcheck.js, CONTRACT-SCAM.md) per messaggi, link, IBAN ed email
+ * e window.WhoAreYou.analyze (assets/js/analyzer.js, CONTRACT.md) per il fascicolo dei numeri di telefono.
+ * Il testo dei messaggi non viene mai salvato né messo nell'URL: in cronologia finiscono solo i numeri. */
 (function () {
   'use strict';
 
@@ -7,16 +9,21 @@
   var HISTORY_KEY = 'whoareyou:history';
   var HISTORY_MAX = 20;
   var NOTE_MAX = 140;
+  var TEXT_MAX = 5000;
+  var SITE_URL = 'https://lorebiri.github.io/whoareyou/';
   var BASE_TITLE = document.title;
 
   var $ = function (id) { return document.getElementById(id); };
   var form = $('cerca');
-  var input = $('numero');
+  var input = $('testo');
   var pasteBtn = $('incolla');
-  var submitBtn = $('indaga');
+  var submitBtn = $('analizza');
+  var counterEl = $('contatore');
+  var examplesEl = $('esempi');
   var zone = $('esito');
   var scanEl = $('scan');
   var resultEl = $('result');
+  var statusEl = $('annuncio');
   var toastEl = $('toast');
   var historySection = $('cronologia');
   var historyList = $('cronologia-lista');
@@ -24,6 +31,7 @@
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var runId = 0;
+  var lastMessage = null; // { report, text } dell'ultimo messaggio analizzato, solo in memoria
 
   /* ---------- helpers ---------- */
 
@@ -70,7 +78,13 @@
     good: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm-4 9 3 3 5-6',
     copy: 'M8 8h11v13H8zM5 16V3h11',
     share: 'M12 15V3m0 0L7 8m5-5 5 5M5 13v8h14v-8',
-    external: 'M14 4h6v6m0-6-9 9M18 14v6H4V6h6'
+    external: 'M14 4h6v6m0-6-9 9M18 14v6H4V6h6',
+    link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+    bank: 'M3 9 12 4l9 5M5 10v8m4.7-8v8m4.6-8v8M19 10v8M3 20h18',
+    mail: 'M3 6h18v12H3zm0 0 9 7 9-7',
+    phone: 'M6 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 4 5a2 2 0 0 1 2-2z',
+    back: 'M15 5l-7 7 7 7',
+    again: 'M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4'
   };
   function icon(name, cls) {
     return svg('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true', focusable: 'false', class: 'icon ' + (cls || '') }, [
@@ -150,46 +164,135 @@
   /* ---------- analisi ---------- */
 
   function analyzerReady() {
-    return window.WhoAreYou && typeof window.WhoAreYou.analyze === 'function';
+    return !!(window.WhoAreYou && typeof window.WhoAreYou.analyze === 'function');
+  }
+  function scamReady() {
+    return !!(window.ScamCheck && typeof window.ScamCheck.analyze === 'function');
   }
 
+  // Euristica minima, usata solo se scamcheck.js non è caricato o per scegliere l'animazione.
+  function looksLikePhone(s) {
+    s = String(s || '').trim();
+    if (!/^[+\d\s().\-\/]{5,30}$/.test(s)) return false;
+    var digits = s.replace(/\D/g, '');
+    return digits.length >= 6 && digits.length <= 16;
+  }
+
+  function setBusy(on) {
+    submitBtn.disabled = !!on;
+    resultEl.setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+
+  function announce(msg) {
+    statusEl.textContent = '';
+    // piccolo ritardo: alcuni lettori di schermo ignorano un cambio immediato
+    setTimeout(function () { statusEl.textContent = msg; }, 60);
+  }
+
+  // Punto d'ingresso: testo libero (messaggio, link, IBAN, email o numero).
   function runAnalysis(raw, opts) {
     opts = opts || {};
-    raw = String(raw || '').trim();
+    raw = String(raw || '').replace(/\r\n?/g, '\n').trim().slice(0, TEXT_MAX);
+    lastMessage = null;
     if (!raw) {
-      renderError('Inserisci un numero di telefono da analizzare.', 'Puoi incollarlo dal registro chiamate: vanno bene spazi, trattini e prefisso +39 o 0039.');
+      renderError('Incolla prima qualcosa da controllare.', 'Va bene un SMS, un\'email, un messaggio WhatsApp, un link, un IBAN o un numero di telefono.');
       input.focus();
       return;
     }
-    if (!analyzerReady()) {
-      renderError('Il motore di analisi non si è caricato.', 'Ricarica la pagina. Se il problema continua, controlla che il browser non blocchi gli script del sito.');
-      return;
-    }
 
-    var result;
-    try {
-      result = window.WhoAreYou.analyze(raw, { defaultCountry: 'IT' });
-    } catch (e) {
-      renderError('Non siamo riusciti ad analizzare questo numero.', 'Controlla di averlo copiato per intero e riprova.');
-      return;
-    }
-    if (!result || result.error || (!result.e164 && !result.valid)) {
-      renderError((result && result.error) || 'Questo non sembra un numero di telefono valido.',
-        'Controlla le cifre: un cellulare italiano ha di solito 10 cifre (es. 333 123 4567), un fisso inizia con 0.');
+    if (!scamReady()) {
+      if (looksLikePhone(raw)) { runPhone(raw, opts); return; }
+      renderError('Il motore di analisi dei messaggi non si è caricato.', 'Ricarica la pagina. Se il problema continua, controlla che il browser non blocchi gli script del sito. Puoi comunque verificare un numero di telefono incollandolo da solo.');
       return;
     }
 
     var id = ++runId;
-    submitBtn.disabled = true;
-    playScan(result, function () {
+    setBusy(true);
+    var pending;
+    try {
+      pending = Promise.resolve(window.ScamCheck.analyze(raw, { defaultCountry: 'IT' }));
+    } catch (e) {
+      pending = Promise.reject(e);
+    }
+    var phoneGuess = looksLikePhone(raw);
+    var steps = phoneGuess ? phoneSteps(analyzerReady() ? safePhone(raw) : null) : MESSAGE_STEPS;
+
+    playScan(steps, phoneGuess ? raw : null, pending, function (err, report) {
       if (id !== runId) return;
-      submitBtn.disabled = false;
-      renderResult(result);
-      remember(result);
-      updateUrl(result);
-      if (opts.focus !== false) zone.focus({ preventScroll: true });
-      if (opts.scroll !== false) scrollToResult();
+      setBusy(false);
+      if (err || !report) {
+        renderError('Non siamo riusciti ad analizzare questo testo.', 'Riprova. Se il problema continua, ricarica la pagina.');
+        return;
+      }
+      if (report.kind === 'empty' || (report.error && report.kind !== 'phone')) {
+        renderError(report.error || 'Non c\'è niente da analizzare.', 'Incolla il testo completo del messaggio, il link, l\'IBAN o il numero.');
+        return;
+      }
+      var phone = report.kind === 'phone' && report.entities && report.entities.phones && report.entities.phones[0];
+      if (report.kind === 'phone') {
+        if (!phone || !phone.result) {
+          renderError(report.error || 'Questo non sembra un numero di telefono valido.', PHONE_HINT);
+          return;
+        }
+        showPhone(phone.result, opts);
+        return;
+      }
+      clearUrl();
+      lastMessage = { report: report, text: raw };
+      renderMessage(report, raw);
+      afterRender(opts, 'Analisi completata. ' + verdictText(report) + '. ' + (report.headline || ''));
     });
+  }
+
+  var PHONE_HINT = 'Controlla le cifre: un cellulare italiano ha di solito 10 cifre (es. 333 123 4567), un fisso inizia con 0.';
+
+  function safePhone(raw) {
+    try { return window.WhoAreYou.analyze(raw, { defaultCountry: 'IT' }); } catch (e) { return null; }
+  }
+
+  // Analisi diretta di un numero con WhoAreYou (cronologia, fallback, numeri trovati in un messaggio).
+  function runPhone(raw, opts) {
+    opts = opts || {};
+    if (!analyzerReady()) {
+      renderError('Il motore di analisi non si è caricato.', 'Ricarica la pagina. Se il problema continua, controlla che il browser non blocchi gli script del sito.');
+      return;
+    }
+    var result = safePhone(raw);
+    if (!result || result.error || (!result.e164 && !result.valid)) {
+      renderError((result && result.error) || 'Questo non sembra un numero di telefono valido.', PHONE_HINT);
+      return;
+    }
+    var id = ++runId;
+    setBusy(true);
+    playScan(phoneSteps(result), result.international || result.e164, Promise.resolve(result), function () {
+      if (id !== runId) return;
+      setBusy(false);
+      showPhone(result, opts);
+    });
+  }
+
+  function showPhone(result, opts) {
+    if (!result || result.error || (!result.e164 && !result.valid)) {
+      renderError((result && result.error) || 'Questo non sembra un numero di telefono valido.', PHONE_HINT);
+      return;
+    }
+    renderResult(result, opts.back || null);
+    remember(result);
+    updateUrl(result);
+    afterRender(opts, 'Fascicolo pronto per ' + (result.international || result.e164) + '. ' + (result.verdictLabel || VERDICTS[result.verdict] || ''));
+  }
+
+  function afterRender(opts, msg) {
+    announce(msg);
+    var target = resultEl.querySelector('[data-focus]') || zone;
+    if (opts.focus !== false) {
+      try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    }
+    if (opts.scroll !== false) scrollToResult();
+  }
+
+  function verdictText(r) {
+    return r.verdictLabel || VERDICTS[r.verdict] || VERDICTS.neutro;
   }
 
   function scrollToResult() {
@@ -197,25 +300,59 @@
     window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
   }
 
-  // Breve sequenza che descrive i controlli realmente eseguiti dall'analizzatore.
-  function playScan(r, done) {
-    var steps = ['Normalizzo il formato del numero'];
-    steps.push(r.country ? 'Riconosco il prefisso +' + r.country.dialCode : 'Cerco il prefisso internazionale');
-    steps.push('Classifico il tipo di linea');
-    steps.push('Confronto con gli schemi di truffa noti');
-    steps.push('Preparo le ricerche sul web');
+  // Controlli realmente eseguiti dai motori (scamcheck.js e analyzer.js).
+  var MESSAGE_STEPS = [
+    'Leggo il testo',
+    'Confronto con i copioni di truffa noti',
+    'Controllo i link',
+    'Verifico IBAN, email e numeri di telefono',
+    'Cerco urgenza, minacce e richieste di codici'
+  ];
+  function phoneSteps(r) {
+    return [
+      'Normalizzo il formato del numero',
+      r && r.country ? 'Riconosco il prefisso +' + r.country.dialCode : 'Cerco il prefisso internazionale',
+      'Classifico il tipo di linea',
+      'Confronto con gli schemi di truffa noti',
+      'Preparo le ricerche sul web'
+    ];
+  }
 
-    if (reduceMotion) { done(); return; }
+  // Mostra i passi dell'analisi e chiama done(err, valore) quando sia l'animazione sia la promessa sono finite.
+  function playScan(steps, label, pending, done) {
+    var animDone = false, settled = false, err = null, value = null, finished = false;
+    var items = [];
+    function finish() {
+      if (finished || !animDone || !settled) return;
+      finished = true;
+      scanEl.hidden = true;
+      document.body.classList.remove('scanning');
+      done(err, value);
+    }
+    pending.then(function (v) { value = v; settled = true; finish(); },
+      function (e) { err = e || new Error('analisi'); settled = true; finish(); });
 
     resultEl.textContent = '';
     scanEl.textContent = '';
     var list = h('ol', { class: 'scan-steps' });
-    var items = steps.map(function (s) { return h('li', null, s); });
+    items = steps.map(function (s) { return h('li', null, s); });
     append(list, items);
-    append(scanEl, [h('p', { class: 'scan-number', text: r.international || r.e164 || r.normalized }), list]);
+    append(scanEl, [
+      h('p', { class: 'scan-number' + (label ? '' : ' scan-title'), text: label || 'Analisi in corso' }),
+      list
+    ]);
+
+    if (reduceMotion) {
+      // Nessuna animazione: mostriamo la lista solo se la risposta tarda.
+      items.forEach(function (li) { li.classList.add('done'); });
+      animDone = true;
+      setTimeout(function () { if (!finished) scanEl.hidden = false; }, 250);
+      finish();
+      return;
+    }
+
     scanEl.hidden = false;
     document.body.classList.add('scanning');
-
     var i = 0;
     var per = 190;
     (function tick() {
@@ -225,11 +362,10 @@
         i++;
         setTimeout(tick, per);
       } else {
-        setTimeout(function () {
-          scanEl.hidden = true;
-          document.body.classList.remove('scanning');
-          done();
-        }, 140);
+        // l'ultimo passo resta "attivo" finché la risposta non arriva
+        items[items.length - 1].classList.remove('done');
+        items[items.length - 1].classList.add('active');
+        setTimeout(function () { animDone = true; finish(); }, 140);
       }
     })();
   }
@@ -248,7 +384,8 @@
     ]));
   }
 
-  function renderResult(r) {
+  // back: { report, text } se il numero arriva da un messaggio appena analizzato.
+  function renderResult(r, back) {
     resultEl.textContent = '';
     var verdict = VERDICTS[r.verdict] ? r.verdict : 'neutro';
     var score = Math.max(0, Math.min(100, Math.round(Number(r.score) || 0)));
@@ -259,6 +396,12 @@
 
     // Intestazione
     var head = h('header', { class: 'dossier-head' }, [
+      back ? h('button', { type: 'button', class: 'btn-link back-link', onclick: function () {
+        lastMessage = back;
+        renderMessage(back.report, back.text);
+        clearUrl();
+        afterRender({}, 'Di nuovo l\'analisi del messaggio. ' + verdictText(back.report) + '.');
+      } }, [icon('back'), h('span', { text: 'Torna all\'analisi del messaggio' })]) : null,
       h('p', { class: 'dossier-kicker', text: 'Fascicolo del numero' }),
       h('div', { class: 'dossier-actions' }, [
         h('button', { type: 'button', class: 'btn-ghost sm', onclick: function () {
@@ -273,7 +416,7 @@
     var identity = h('div', { class: 'identity' }, [
       gauge.el,
       h('div', { class: 'identity-main' }, [
-        h('h2', { id: 'dossier-num', class: 'number' }, shown),
+        h('h2', { id: 'dossier-num', class: 'number', tabindex: '-1', 'data-focus': '' }, shown),
         r.national && r.national !== shown ? h('p', { class: 'national muted' }, 'Formato nazionale: ' + r.national) : null,
         h('p', { class: 'stamp', 'data-verdict': verdict }, r.verdictLabel || VERDICTS[verdict])
       ])
@@ -367,10 +510,10 @@
     return sec;
   }
 
-  function buildAdvice(advice) {
+  function buildAdvice(advice, emptyText) {
     var sec = h('section', { class: 'panel advice', 'aria-labelledby': 'h-advice' }, [h('h3', { id: 'h-advice', text: 'Cosa ti consigliamo' })]);
     if (!advice.length) {
-      append(sec, h('p', { class: 'muted', text: 'Se non aspettavi la chiamata, cerca il numero sul web prima di richiamare.' }));
+      append(sec, h('p', { class: 'muted', text: emptyText || 'Se non aspettavi la chiamata, cerca il numero sul web prima di richiamare.' }));
       return sec;
     }
     append(sec, append(h('ul', { class: 'advice-list' }), advice.map(function (a) { return h('li', { text: a }); })));
@@ -449,6 +592,355 @@
     });
     append(sec, grid);
     return sec;
+  }
+
+  /* ---------- esito di un messaggio (ScamCheck) ---------- */
+
+  var KIND_LABEL = {
+    message: 'Analisi del messaggio',
+    url: 'Analisi del link',
+    iban: 'Analisi dell\'IBAN',
+    email: 'Analisi dell\'indirizzo email'
+  };
+  var CONFIDENCE_LABEL = { alta: 'Somiglianza alta', media: 'Somiglianza media', bassa: 'Somiglianza bassa' };
+  var RISK = {
+    alto: { label: 'Rischio alto', v: 'pericoloso' },
+    medio: { label: 'Rischio medio', v: 'sospetto' },
+    basso: { label: 'Rischio basso', v: 'neutro' }
+  };
+  var LAYER_STATUS = { ok: 'Completata', error: 'Non disponibile', skipped: 'Non eseguita' };
+
+  function arr(x) { return Array.isArray(x) ? x : []; }
+  function str(x) { return x == null ? '' : String(x); }
+
+  function sortSignals(signals) {
+    return arr(signals).filter(Boolean).slice().sort(function (a, b) {
+      var ra = SEVERITY_RANK[a.severity] != null ? SEVERITY_RANK[a.severity] : 3;
+      var rb = SEVERITY_RANK[b.severity] != null ? SEVERITY_RANK[b.severity] : 3;
+      if (ra !== rb) return ra - rb;
+      return (Number(a.impact) || 0) - (Number(b.impact) || 0);
+    });
+  }
+
+  // Rende un link inoffensivo da leggere: niente schema cliccabile, punti tra parentesi.
+  function defang(s) {
+    return str(s)
+      .replace(/^(h)(t)(tps?)(:\/\/)/i, function (m, a, b, c) { return a + 'xx' + c.slice(1) + '[://]'; })
+      .replace(/\./g, '[.]');
+  }
+  function shorten(s, max) {
+    s = str(s);
+    return s.length > max ? s.slice(0, max - 1) + '…' : s;
+  }
+  function groupIban(s) {
+    return str(s).replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  function renderMessage(rep, text) {
+    resultEl.textContent = '';
+    var verdict = VERDICTS[rep.verdict] ? rep.verdict : 'neutro';
+    var score = Math.max(0, Math.min(100, Math.round(Number(rep.score) || 0)));
+    var ent = rep.entities || {};
+
+    var card = h('article', { class: 'dossier msg-report v-' + verdict, 'aria-labelledby': 'msg-headline' });
+
+    var head = h('header', { class: 'dossier-head' }, [
+      h('p', { class: 'dossier-kicker', text: KIND_LABEL[rep.kind] || KIND_LABEL.message }),
+      h('div', { class: 'dossier-actions' }, [
+        h('button', { type: 'button', class: 'btn-ghost sm', onclick: function () {
+          copyText(summaryText(rep)).then(function () { toast('Esito copiato negli appunti (senza il testo del messaggio).'); },
+            function () { toast('Copia non riuscita.'); });
+        } }, [icon('copy'), h('span', { text: 'Copia esito' })]),
+        h('button', { type: 'button', class: 'btn-ghost sm', onclick: newCheck }, [icon('again'), h('span', { text: 'Controlla un altro testo' })])
+      ])
+    ]);
+
+    var gauge = buildGauge(score, verdict);
+    var identity = h('div', { class: 'identity' }, [
+      gauge.el,
+      h('div', { class: 'identity-main' }, [
+        h('p', { class: 'stamp', 'data-verdict': verdict }, verdictText(rep)),
+        h('h2', { id: 'msg-headline', class: 'headline', tabindex: '-1', 'data-focus': '' }, rep.headline || verdictText(rep))
+      ])
+    ]);
+
+    append(card, [head, identity]);
+    append(card, buildScams(arr(rep.scams)));
+    append(card, h('div', { class: 'dossier-cols' }, [buildMsgSignals(rep.signals), buildAdvice(arr(rep.advice), 'Se il messaggio ti mette fretta o chiede soldi o codici, fermati e verifica con il mittente usando un contatto ufficiale.')]));
+    append(card, buildHighlighted(text, rep));
+    append(card, buildEntities(ent));
+    append(card, buildLayers(arr(rep.layers)));
+    append(card, h('p', { class: 'disclaimer small muted', text: 'L\'esito è indicativo: si basa su regole e copioni di truffa noti. Nel dubbio non cliccare, non pagare e chiedi conferma a una persona di fiducia o al servizio clienti ufficiale.' }));
+
+    append(resultEl, card);
+    gauge.start();
+    document.title = verdictText(rep) + ' – esito del controllo | WhoAreYou';
+  }
+
+  function buildScams(scams) {
+    if (!scams.length) return null;
+    var sec = h('section', { class: 'scam-found', 'aria-labelledby': 'h-scams' }, [
+      h('h3', { id: 'h-scams', text: scams.length > 1 ? 'Truffe riconosciute' : 'Truffa riconosciuta' })
+    ]);
+    var order = { alta: 0, media: 1, bassa: 2 };
+    var list = h('ul', { class: 'scam-cards' });
+    scams.slice().sort(function (a, b) { return (order[a.confidence] != null ? order[a.confidence] : 3) - (order[b.confidence] != null ? order[b.confidence] : 3); })
+      .forEach(function (s) {
+        var c = CONFIDENCE_LABEL[s.confidence] ? s.confidence : 'bassa';
+        append(list, h('li', { class: 'scam-card conf-' + c }, [
+          h('div', { class: 'scam-card-head' }, [
+            h('h4', { text: str(s.label) || 'Copione di truffa' }),
+            h('span', { class: 'badge conf-' + c, text: CONFIDENCE_LABEL[c] })
+          ]),
+          s.explanation ? h('p', { text: s.explanation }) : null
+        ]));
+      });
+    append(sec, list);
+    return sec;
+  }
+
+  function signalItem(s) {
+    var positive = (Number(s.impact) || 0) > 0;
+    var sev = SEVERITY_RANK[s.severity] != null ? s.severity : 'info';
+    var kind = positive ? 'good' : sev;
+    return h('li', { class: 'signal s-' + kind }, [
+      icon(kind),
+      h('div', null, [
+        h('p', { class: 'signal-label' }, [
+          h('span', { text: str(s.label) }),
+          h('span', { class: 'sr-only', text: ' (' + (positive ? 'rassicurante' : SEVERITY_LABEL[sev]) + ')' })
+        ]),
+        s.detail ? h('p', { class: 'signal-detail', text: s.detail }) : null,
+        s.evidence ? h('p', { class: 'evidence' }, [
+          h('span', { class: 'sr-only', text: 'Nel testo: ' }),
+          h('q', { text: shorten(s.evidence, 160) })
+        ]) : null
+      ])
+    ]);
+  }
+
+  function buildMsgSignals(signals) {
+    var sorted = sortSignals(signals);
+    var sec = h('section', { class: 'panel signals', 'aria-labelledby': 'h-signals' }, [h('h3', { id: 'h-signals', text: 'Perché lo pensiamo' })]);
+    if (!sorted.length) {
+      append(sec, h('p', { class: 'muted', text: 'Nessun segnale particolare trovato nel testo.' }));
+      return sec;
+    }
+    append(sec, append(h('ul', { class: 'signal-list' }), sorted.map(signalItem)));
+    return sec;
+  }
+
+  function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  // Copia di sola lettura del testo con le parti sospette evidenziate. Solo nodi di testo e <mark>.
+  function buildHighlighted(text, rep) {
+    var ent = rep.entities || {};
+    var needles = [];
+    sortSignals(rep.signals).forEach(function (s) {
+      if (s.evidence && (Number(s.impact) || 0) <= 0) needles.push({ t: str(s.evidence), sev: SEVERITY_RANK[s.severity] != null ? s.severity : 'low', label: str(s.label) });
+    });
+    arr(ent.urls).forEach(function (u) { if (u && u.raw) needles.push({ t: str(u.raw), sev: u.risk === 'alto' ? 'high' : u.risk === 'medio' ? 'medium' : 'low', label: 'Link' }); });
+    arr(ent.ibans).forEach(function (b) { if (b && b.raw) needles.push({ t: str(b.raw), sev: 'medium', label: 'IBAN' }); });
+    arr(ent.emails).forEach(function (m) { if (m && m.raw) needles.push({ t: str(m.raw), sev: 'low', label: 'Email' }); });
+    arr(ent.phones).forEach(function (p) { if (p && p.raw) needles.push({ t: str(p.raw), sev: 'low', label: 'Numero' }); });
+
+    // intervalli [inizio, fine) con la gravità più alta
+    var ranges = [];
+    needles.forEach(function (n) {
+      var t = n.t.trim();
+      if (t.length < 2 || t.length > 600) return;
+      var re;
+      try { re = new RegExp(t.split(/\s+/).map(escapeRe).join('\\s+'), 'gi'); } catch (e) { return; }
+      var m, guard = 0;
+      while ((m = re.exec(text)) && guard++ < 50) {
+        if (!m[0].length) { re.lastIndex++; continue; }
+        ranges.push({ s: m.index, e: m.index + m[0].length, sev: n.sev, label: n.label });
+      }
+    });
+    if (!ranges.length) return null;
+    ranges.sort(function (a, b) { return a.s - b.s || b.e - a.e; });
+    var merged = [];
+    ranges.forEach(function (r) {
+      var last = merged[merged.length - 1];
+      if (last && r.s <= last.e) {
+        last.e = Math.max(last.e, r.e);
+        if (SEVERITY_RANK[r.sev] < SEVERITY_RANK[last.sev]) { last.sev = r.sev; last.label = r.label; }
+      } else merged.push({ s: r.s, e: r.e, sev: r.sev, label: r.label });
+    });
+
+    var box = h('div', { class: 'msg-copy', role: 'region', 'aria-label': 'Il tuo testo con le parti sospette evidenziate', tabindex: '0' });
+    var pos = 0;
+    merged.forEach(function (r) {
+      if (r.s > pos) box.appendChild(document.createTextNode(text.slice(pos, r.s)));
+      var mark = h('mark', { class: 'hl hl-' + r.sev, title: r.label });
+      mark.textContent = text.slice(r.s, r.e);
+      box.appendChild(mark);
+      pos = r.e;
+    });
+    if (pos < text.length) box.appendChild(document.createTextNode(text.slice(pos)));
+
+    return h('details', { class: 'msg-text', open: true }, [
+      h('summary', null, [h('span', { class: 'h3like', text: 'Il tuo testo, con le parti sospette evidenziate' })]),
+      h('p', { class: 'small muted', text: 'Copia di sola lettura: i link qui dentro non sono cliccabili. Il testo resta sul tuo dispositivo.' }),
+      box,
+      h('ul', { class: 'hl-legend small', 'aria-label': 'Legenda' }, [
+        h('li', null, [h('mark', { class: 'hl hl-high', text: 'rosso' }), ' rischio alto']),
+        h('li', null, [h('mark', { class: 'hl hl-medium', text: 'arancio' }), ' rischio medio']),
+        h('li', null, [h('mark', { class: 'hl hl-low', text: 'grigio' }), ' da controllare'])
+      ])
+    ]);
+  }
+
+  function reasonsList(signals) {
+    var s = sortSignals(signals);
+    if (!s.length) return null;
+    return append(h('ul', { class: 'reasons' }), s.map(function (x) {
+      var positive = (Number(x.impact) || 0) > 0;
+      var sev = SEVERITY_RANK[x.severity] != null ? x.severity : 'info';
+      return h('li', { class: 'reason s-' + (positive ? 'good' : sev) }, [
+        h('strong', { text: str(x.label) }),
+        x.detail ? h('span', { text: ' – ' + x.detail }) : null
+      ]);
+    }));
+  }
+
+  function entityGroup(id, iconName, title, note, items) {
+    return h('section', { class: 'entity-group', 'aria-labelledby': id }, [
+      h('h4', { id: id }, [icon(iconName), h('span', { text: title })]),
+      note ? h('p', { class: 'small muted', text: note }) : null,
+      append(h('ul', { class: 'entity-list' }), items)
+    ]);
+  }
+
+  function buildEntities(ent) {
+    var urls = arr(ent.urls).filter(Boolean);
+    var ibans = arr(ent.ibans).filter(Boolean);
+    var emails = arr(ent.emails).filter(Boolean);
+    var phones = arr(ent.phones).filter(function (p) { return p && p.result; });
+    if (!urls.length && !ibans.length && !emails.length && !phones.length) return null;
+
+    var sec = h('section', { class: 'found', 'aria-labelledby': 'h-found' }, [
+      h('h3', { id: 'h-found', text: 'Cosa abbiamo trovato nel testo' })
+    ]);
+    var groups = h('div', { class: 'entity-groups' });
+
+    if (urls.length) {
+      append(groups, entityGroup('h-f-urls', 'link', urls.length > 1 ? 'Link (' + urls.length + ')' : 'Link',
+        'Mostrati in forma sicura e non cliccabili. Non aprirli: se devi controllare qualcosa, vai tu sul sito ufficiale scrivendo l\'indirizzo a mano.',
+        urls.map(function (u) {
+          var risk = RISK[u.risk] || RISK.basso;
+          return h('li', { class: 'entity v-' + risk.v }, [
+            h('div', { class: 'entity-head' }, [
+              h('p', { class: 'entity-main defanged', text: u.host ? defang(u.host) : 'Indirizzo non leggibile' }),
+              h('span', { class: 'badge risk', text: risk.label })
+            ]),
+            h('p', { class: 'entity-sub small muted' }, [h('span', { class: 'sr-only', text: 'Link completo: ' }), h('span', { class: 'defanged', text: shorten(defang(u.raw), 140) })]),
+            reasonsList(u.signals)
+          ]);
+        })));
+    }
+
+    if (ibans.length) {
+      append(groups, entityGroup('h-f-ibans', 'bank', 'IBAN',
+        'Un IBAN corretto non garantisce chi lo possiede: prima di un bonifico verifica sempre con il destinatario usando un contatto che conosci già.',
+        ibans.map(function (b) {
+          var ok = !!b.validChecksum;
+          return h('li', { class: 'entity v-' + (ok ? 'neutro' : 'pericoloso') }, [
+            h('div', { class: 'entity-head' }, [
+              h('p', { class: 'entity-main mono', text: groupIban(b.normalized || b.raw) }),
+              h('span', { class: 'badge ' + (ok ? 'ok' : 'ko'), text: ok ? 'Codice di controllo corretto' : 'Codice di controllo errato' })
+            ]),
+            h('p', { class: 'entity-sub small muted', text: 'Paese: ' + (b.country || 'non riconosciuto') }),
+            reasonsList(b.signals)
+          ]);
+        })));
+    }
+
+    if (emails.length) {
+      append(groups, entityGroup('h-f-emails', 'mail', 'Indirizzi email', null,
+        emails.map(function (m) {
+          var bad = sortSignals(m.signals).filter(function (s) { return (Number(s.impact) || 0) < 0; });
+          var worst = bad.length ? bad[0].severity : null;
+          var v = worst === 'high' ? 'pericoloso' : worst === 'medium' ? 'sospetto' : 'neutro';
+          return h('li', { class: 'entity v-' + v }, [
+            h('div', { class: 'entity-head' }, [
+              h('p', { class: 'entity-main mono', text: str(m.raw) }),
+              bad.length ? h('span', { class: 'badge risk', text: SEVERITY_LABEL[worst] || 'Da controllare' }) : null
+            ]),
+            m.domain ? h('p', { class: 'entity-sub small muted', text: 'Dominio: ' + defang(m.domain) }) : null,
+            reasonsList(m.signals)
+          ]);
+        })));
+    }
+
+    if (phones.length) {
+      append(groups, entityGroup('h-f-phones', 'phone', 'Numeri di telefono',
+        'Non richiamare un numero solo perché è scritto nel messaggio: usa quello sul sito ufficiale o sulla tua carta.',
+        phones.map(function (p) {
+          var r = p.result;
+          var v = VERDICTS[r.verdict] ? r.verdict : 'neutro';
+          var shown = r.international || r.e164 || str(p.raw);
+          return h('li', { class: 'entity phone-row v-' + v }, [
+            h('div', { class: 'phone-row-main' }, [
+              h('span', { class: 'dot', 'aria-hidden': 'true' }),
+              h('div', null, [
+                h('p', { class: 'entity-main mono', text: shown }),
+                h('p', { class: 'entity-sub small muted', text: [r.verdictLabel || VERDICTS[v], r.lineTypeLabel, r.country && r.country.name].filter(Boolean).join(' · ') })
+              ])
+            ]),
+            h('button', { type: 'button', class: 'btn-ghost sm', onclick: function () {
+              var back = lastMessage;
+              renderResult(r, back);
+              remember(r);
+              updateUrl(r);
+              afterRender({}, 'Fascicolo pronto per ' + shown + '. ' + (r.verdictLabel || VERDICTS[v]));
+            } }, [h('span', { text: 'Analizza questo numero' }), h('span', { class: 'sr-only', text: ' ' + shown })])
+          ]);
+        })));
+    }
+
+    append(sec, groups);
+    return sec;
+  }
+
+  // Livelli di analisi: oggi solo "Regole"; pronto per livelli futuri (es. analisi AI).
+  function buildLayers(layers) {
+    if (!layers.length) layers = [{ id: 'regole', label: 'Regole', status: 'ok' }];
+    return h('section', { class: 'layers', 'aria-labelledby': 'h-layers' }, [
+      h('h3', { id: 'h-layers', class: 'small-head', text: 'Livelli di analisi' }),
+      append(h('ul', { class: 'layer-list' }), layers.map(function (l) {
+        var st = LAYER_STATUS[l.status] ? l.status : 'skipped';
+        return h('li', { class: 'layer st-' + st }, [
+          h('span', { class: 'layer-dot', 'aria-hidden': 'true' }),
+          h('span', { class: 'layer-name', text: str(l.label || l.id) }),
+          h('span', { class: 'layer-status', text: LAYER_STATUS[st] }),
+          l.summary ? h('span', { class: 'layer-summary', text: str(l.summary) }) : null
+        ]);
+      }))
+    ]);
+  }
+
+  function summaryText(rep) {
+    var lines = ['WhoAreYou – È una truffa?', 'Esito: ' + verdictText(rep) + ' (affidabilità ' + Math.round(Number(rep.score) || 0) + '/100)'];
+    if (rep.headline) lines.push(rep.headline);
+    arr(rep.scams).forEach(function (s) { lines.push('Truffa riconosciuta: ' + s.label + ' (' + (CONFIDENCE_LABEL[s.confidence] || '').toLowerCase() + ')'); });
+    var sig = sortSignals(rep.signals).filter(function (s) { return (Number(s.impact) || 0) < 0; }).slice(0, 6);
+    if (sig.length) { lines.push('', 'Segnali:'); sig.forEach(function (s) { lines.push('- ' + s.label); }); }
+    if (arr(rep.advice).length) { lines.push('', 'Consigli:'); rep.advice.forEach(function (a) { lines.push('- ' + a); }); }
+    lines.push('', SITE_URL);
+    return lines.join('\n');
+  }
+
+  function newCheck() {
+    input.value = '';
+    lastMessage = null;
+    autoGrow();
+    resultEl.textContent = '';
+    document.title = BASE_TITLE;
+    clearUrl();
+    var top = form.getBoundingClientRect().top + window.pageYOffset - 16;
+    window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
+    input.focus({ preventScroll: true });
   }
 
   /* ---------- segnalazioni locali ---------- */
@@ -549,7 +1041,9 @@
       var v = VERDICTS[item.verdict] ? item.verdict : 'neutro';
       append(historyList, h('li', null, h('button', { type: 'button', class: 'history-item v-' + v, onclick: function () {
         input.value = item.e164;
-        runAnalysis(item.e164);
+        autoGrow();
+        lastMessage = null;
+        runPhone(item.e164);
       } }, [
         h('span', { class: 'dot', 'aria-hidden': 'true' }),
         h('span', { class: 'history-num', text: item.e164 }),
@@ -594,14 +1088,68 @@
     }
   }
 
+  function clearUrl() {
+    if (!window.history || !history.replaceState) return;
+    if (!window.location.search && !window.location.hash) return;
+    try {
+      var u = new URL(window.location.href);
+      u.search = '';
+      u.hash = '';
+      history.replaceState(null, '', u.toString());
+    } catch (e) { /* file:// o simili */ }
+  }
+
+  // ?q= / #q= (testo libero) e ?n= / #n= (numero, retrocompatibile).
   function readDeepLink() {
-    var n = null;
-    try { n = new URLSearchParams(window.location.search).get('n'); } catch (e) { n = null; }
-    if (!n && window.location.hash) {
-      var m = window.location.hash.slice(1);
-      try { n = new URLSearchParams(m).get('n'); } catch (e) { n = null; }
+    var params = [];
+    try { params.push(new URLSearchParams(window.location.search)); } catch (e) { /* ignora */ }
+    if (window.location.hash) {
+      try { params.push(new URLSearchParams(window.location.hash.slice(1))); } catch (e) { /* ignora */ }
     }
-    return n ? n.slice(0, 40) : null;
+    for (var i = 0; i < params.length; i++) {
+      var q = params[i].get('q');
+      if (q && q.trim()) return { type: 'q', value: q.slice(0, TEXT_MAX) };
+      var n = params[i].get('n');
+      if (n && n.trim()) return { type: 'n', value: n.slice(0, 40) };
+    }
+    return null;
+  }
+
+  /* ---------- campo di testo ---------- */
+
+  function autoGrow() {
+    input.style.height = 'auto';
+    var max = Math.max(220, Math.round(window.innerHeight * 0.6));
+    input.style.height = Math.min(input.scrollHeight + 4, max) + 'px';
+    input.style.overflowY = input.scrollHeight + 4 > max ? 'auto' : 'hidden';
+    var len = input.value.length;
+    counterEl.textContent = len ? len + ' / ' + TEXT_MAX + ' caratteri' : '';
+    counterEl.classList.toggle('near', len > TEXT_MAX * 0.9);
+  }
+
+  function fillAndRun(text) {
+    input.value = String(text || '').slice(0, TEXT_MAX);
+    autoGrow();
+    runAnalysis(input.value);
+  }
+
+  // Esempi volutamente finti (indirizzi e IBAN di prova) per provare lo strumento.
+  var EXAMPLES = [
+    { label: 'Finto pacco', text: 'Poste: il tuo pacco è in giacenza per indirizzo incompleto. Conferma i dati e paga 1,99 euro di spese entro 24 ore, altrimenti verrà restituito al mittente: https://poste-giacenza-esempio.xyz/pacco' },
+    { label: 'Ciao mamma', text: 'Ciao mamma, mi si è rotto il telefono e questo è il mio nuovo numero, salvalo. Ho bisogno di un favore urgente: devo pagare una fattura oggi ma non riesco con la mia app. Ti mando l\'IBAN, fai un bonifico istantaneo e poi ti ridò tutto. IBAN IT60X0542811101000000123456' },
+    { label: 'Banca bloccata', text: 'AVVISO SICUREZZA: abbiamo rilevato un accesso anomalo al tuo conto. Il conto è stato temporaneamente sospeso. Per riattivarlo verifica subito i tuoi dati qui: http://banca-verifica-esempio.top/login e inserisci il codice OTP che riceverai via SMS.' },
+    { label: 'Un numero', text: '+1 876 555 0123' }
+  ];
+
+  function buildExamples() {
+    if (!examplesEl) return;
+    examplesEl.textContent = '';
+    EXAMPLES.forEach(function (ex) {
+      append(examplesEl, h('li', null, h('button', { type: 'button', class: 'chip', onclick: function () { fillAndRun(ex.text); } }, [
+        h('span', { text: ex.label }),
+        h('span', { class: 'sr-only', text: ' (esempio inventato)' })
+      ])));
+    });
   }
 
   /* ---------- eventi ---------- */
@@ -611,14 +1159,22 @@
     runAnalysis(input.value);
   });
 
+  input.addEventListener('input', autoGrow);
+  input.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) {
+      ev.preventDefault();
+      runAnalysis(input.value);
+    }
+  });
+
   if (navigator.clipboard && typeof navigator.clipboard.readText === 'function' && window.isSecureContext) {
     pasteBtn.hidden = false;
     pasteBtn.addEventListener('click', function () {
       navigator.clipboard.readText().then(function (t) {
-        t = String(t || '').trim().slice(0, 40);
+        t = String(t || '').trim();
         if (!t) { toast('Gli appunti sono vuoti.'); input.focus(); return; }
-        input.value = t;
-        runAnalysis(t);
+        if (t.length > TEXT_MAX) toast('Testo lungo: analizziamo i primi ' + TEXT_MAX + ' caratteri.');
+        fillAndRun(t);
       }, function () {
         toast('Il browser non permette di leggere gli appunti: incolla con Ctrl+V o tieni premuto sul campo.');
         input.focus();
@@ -626,14 +1182,22 @@
     });
   }
 
+  buildExamples();
   renderHistory();
+  autoGrow();
 
   var deep = readDeepLink();
   if (deep) {
-    input.value = deep;
-    var start = function () { runAnalysis(deep, { focus: false }); };
-    // Gli script sono defer e in ordine, ma restiamo prudenti se analyzer.js arriva dopo.
-    if (analyzerReady()) start();
+    // Privacy: il testo non resta nella barra degli indirizzi né nella cronologia del browser.
+    if (deep.type === 'q') clearUrl();
+    input.value = deep.value;
+    autoGrow();
+    var start = function () {
+      if (deep.type === 'n' && !scamReady()) runPhone(deep.value, { focus: false });
+      else runAnalysis(deep.value, { focus: false });
+    };
+    // Gli script sono defer e in ordine, ma restiamo prudenti se i motori arrivano dopo.
+    if (scamReady() || analyzerReady()) start();
     else window.addEventListener('load', start, { once: true });
   }
 })();

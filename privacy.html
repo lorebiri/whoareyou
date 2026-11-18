@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy – WhoAreYou</title>
-<meta name="description" content="Come WhoAreYou tratta i tuoi dati: l&#x27;analisi dei numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.">
+<meta name="description" content="Come WhoAreYou tratta i tuoi dati: l&#x27;analisi di messaggi, link, IBAN e numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://lorebiri.github.io/whoareyou/privacy.html">
 <meta name="theme-color" content="#0b1020">
@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="WhoAreYou">
 <meta property="og:locale" content="it_IT">
 <meta property="og:title" content="Privacy – WhoAreYou">
-<meta property="og:description" content="Come WhoAreYou tratta i tuoi dati: l&#x27;analisi dei numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.">
+<meta property="og:description" content="Come WhoAreYou tratta i tuoi dati: l&#x27;analisi di messaggi, link, IBAN e numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.">
 <meta property="og:url" content="https://lorebiri.github.io/whoareyou/privacy.html">
 <meta property="og:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="WhoAreYou – Chi mi ha chiamato? Scoprilo in un secondo">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Privacy – WhoAreYou">
-<meta name="twitter:description" content="Come WhoAreYou tratta i tuoi dati: l&#x27;analisi dei numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.">
+<meta name="twitter:description" content="Come WhoAreYou tratta i tuoi dati: l&#x27;analisi di messaggi, link, IBAN e numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.">
 <meta name="twitter:image" content="https://lorebiri.github.io/whoareyou/assets/img/og-image.png">
 <script type="application/ld+json">
 {
@@ -32,7 +32,7 @@
     {
       "@type": "WebPage",
       "name": "Privacy – WhoAreYou",
-      "description": "Come WhoAreYou tratta i tuoi dati: l'analisi dei numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.",
+      "description": "Come WhoAreYou tratta i tuoi dati: l'analisi di messaggi, link, IBAN e numeri avviene interamente nel browser, nessun dato viene inviato ai nostri server, nessun cookie di profilazione.",
       "url": "https://lorebiri.github.io/whoareyou/privacy.html",
       "inLanguage": "it-IT"
     },
@@ -77,17 +77,18 @@
 </nav>
 <article>
 <h1>Privacy</h1>
-<p class="lead">In breve: WhoAreYou funziona interamente nel tuo browser. I numeri che analizzi non vengono inviati ai nostri server, non usiamo cookie e non installiamo strumenti di tracciamento.</p>
-<p class="meta">Ultimo aggiornamento: 10 novembre 2026</p>
+<p class="lead">In breve: WhoAreYou funziona interamente nel tuo browser. I messaggi, i link, gli IBAN e i numeri che analizzi non vengono inviati a nessun server, non usiamo cookie e non installiamo strumenti di tracciamento.</p>
+<p class="meta">Ultimo aggiornamento: 13 novembre 2026</p>
 
 <h2>Dove avviene l'analisi</h2>
-<p>WhoAreYou è un sito statico. Quando incolli un numero, il riconoscimento del paese, del tipo di linea, dei segnali di rischio e il calcolo del punteggio di affidabilità vengono eseguiti dal codice JavaScript caricato nella pagina, <strong>direttamente sul tuo dispositivo</strong>. Non esiste un nostro server che riceva, elabori o archivi i numeri che inserisci.</p>
-<p>Il sito è ospitato su GitHub Pages. Come qualunque servizio di hosting, GitHub può registrare dati tecnici delle richieste (ad esempio l'indirizzo IP) per motivi di sicurezza e funzionamento, secondo la propria informativa privacy. Questi dati non includono i numeri che analizzi, perché l'analisi non genera richieste verso il server.</p>
+<p>WhoAreYou è un sito statico. Quando incolli un SMS, un'email, un messaggio WhatsApp, un link, un IBAN o un numero, il riconoscimento dei copioni di truffa, il controllo dei link e degli IBAN, l'analisi dei numeri e il calcolo del punteggio vengono eseguiti dal codice JavaScript caricato nella pagina, <strong>direttamente sul tuo dispositivo</strong>. Non esiste un nostro server che riceva, elabori o archivi quello che inserisci. I link presenti nel testo non vengono mai aperti.</p>
+<p>Il testo dei messaggi <strong>non viene salvato</strong> e non viene messo nell'indirizzo della pagina: se apri un link del tipo <code>?q=…</code>, l'indirizzo viene ripulito subito. Solo per i numeri di telefono l'indirizzo diventa <code>?n=numero</code>, così puoi condividerlo. Anche i caratteri tipografici sono ospitati sul sito stesso: la pagina non contatta server di terze parti.</p>
+<p>Il sito è ospitato su GitHub Pages. Come qualunque servizio di hosting, GitHub può registrare dati tecnici delle richieste (ad esempio l'indirizzo IP) per motivi di sicurezza e funzionamento, secondo la propria informativa privacy. Questi dati non includono i testi e i numeri che analizzi, perché l'analisi non genera richieste verso il server.</p>
 
 <h2>Cosa resta salvato sul tuo dispositivo</h2>
 <p>Per comodità, alcune informazioni vengono salvate nella memoria locale del browser (<code>localStorage</code>) del tuo dispositivo. Restano lì e non vengono trasmesse a nessuno:</p>
 <ul>
-  <li><code>whoareyou:history</code>: la cronologia delle ultime ricerche (numero, data e esito), per ritrovarle velocemente;</li>
+  <li><code>whoareyou:history</code>: la cronologia degli ultimi numeri di telefono controllati (numero, data ed esito), per ritrovarli velocemente. I testi dei messaggi non vengono mai salvati;</li>
   <li><code>whoareyou:reports</code>: i voti e le note personali che hai associato ai numeri (ad esempio «spam» o «affidabile»).</li>
 </ul>
 <p>Queste informazioni sono visibili solo a chi usa lo stesso browser sullo stesso dispositivo.</p>
@@ -105,7 +106,7 @@
 <p>WhoAreYou non usa cookie, né propri né di terze parti, e non include strumenti di analisi statistica, pubblicità o tracciamento.</p>
 
 <h2>Limiti del servizio</h2>
-<p>I risultati hanno valore puramente indicativo: si basano sulla struttura del numero e su regole generali, non su banche dati degli operatori. Per truffe o tentativi di frode rivolgiti alla Polizia Postale (<a href="https://www.commissariatodips.it/" rel="noopener">commissariatodips.it</a>); per il telemarketing indesiderato puoi consultare la guida su <a href="guide/come-bloccare-telemarketing.html">come bloccare il telemarketing</a>.</p>
+<p>I risultati hanno valore puramente indicativo: si basano su regole, su copioni di truffa noti e sulla struttura dei numeri, non su banche dati degli operatori o elenchi di truffatori. Per truffe o tentativi di frode rivolgiti alla Polizia Postale (<a href="https://www.commissariatodips.it/" rel="noopener">commissariatodips.it</a>); per il telemarketing indesiderato puoi consultare la guida su <a href="guide/come-bloccare-telemarketing.html">come bloccare il telemarketing</a>.</p>
 
 <aside class="cta" aria-label="Verifica un numero">
   <p><strong>Ti ha chiamato un numero sconosciuto?</strong>
