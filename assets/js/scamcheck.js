@@ -247,70 +247,70 @@
    * mai segnalati); text = regex per riconoscere il marchio nel messaggio.
    */
   var BRANDS = [
-    { id: 'poste', name: 'Poste Italiane', kw: ['poste', 'posteitaliane', 'bancoposta', 'postepay', 'posteid', 'postemobile'], strict: [], domains: ['poste.it', 'posteitaliane.it', 'postepay.it', 'postemobile.it'], text: /\b(poste ?italiane|poste|bancoposta|banco posta|postepay|poste ?pay|posteid|ufficio postale)\b/ },
-    { id: 'intesa', name: 'Intesa Sanpaolo', kw: ['intesasanpaolo', 'intesa', 'sanpaolo', 'isybank'], domains: ['intesasanpaolo.com', 'intesasanpaolo.it', 'isybank.com'], text: /\b(intesa|sanpaolo|isybank)\b/ },
+    { id: 'poste', name: 'Poste Italiane', kw: ['poste', 'posteitaliane', 'bancoposta', 'postepay', 'posteid', 'postemobile', 'postevita', 'posteassicura'], strict: [], domains: ['poste.it', 'posteitaliane.it', 'postepay.it', 'postemobile.it', 'postevita.it', 'poste-assicura.it'], text: /\b(poste ?italiane|poste|bancoposta|banco posta|postepay|poste ?pay|posteid|ufficio postale)\b/ },
+    { id: 'intesa', name: 'Intesa Sanpaolo', kw: ['intesasanpaolo', 'intesa', 'sanpaolo', 'isybank'], domains: ['intesasanpaolo.com', 'intesasanpaolo.it', 'isybank.com', 'isybank.it'], text: /\b(intesa|sanpaolo|isybank)\b/ },
     { id: 'unicredit', name: 'UniCredit', kw: ['unicredit'], domains: ['unicredit.it', 'unicredit.eu', 'unicreditgroup.eu'], text: /\bunicredit\b/ },
     { id: 'bnl', name: 'BNL', kw: ['bnl'], domains: ['bnl.it'], text: /\bbnl\b/ },
     { id: 'mps', name: 'Monte dei Paschi', kw: ['mps', 'montepaschi', 'bancamps'], domains: ['mps.it', 'gruppomps.it'], text: /\b(mps|monte (dei )?paschi)\b/ },
     { id: 'bper', name: 'BPER Banca', kw: ['bper'], domains: ['bper.it'], text: /\bbper\b/ },
     { id: 'fineco', name: 'Fineco', kw: ['fineco', 'finecobank'], domains: ['finecobank.com', 'fineco.it'], text: /\bfineco(bank)?\b/ },
     { id: 'nexi', name: 'Nexi', kw: ['nexi'], domains: ['nexi.it', 'nexigroup.com'], text: /\bnexi\b/ },
-    { id: 'mediolanum', name: 'Banca Mediolanum', kw: ['mediolanum', 'bancamediolanum'], domains: ['bancamediolanum.it'], text: /\bmediolanum\b/ },
+    { id: 'mediolanum', name: 'Banca Mediolanum', kw: ['mediolanum', 'bancamediolanum'], domains: ['bancamediolanum.it', 'mediolanum.it'], text: /\bmediolanum\b/ },
     { id: 'bancobpm', name: 'Banco BPM', kw: ['bancobpm', 'bpm', 'webank'], domains: ['bancobpm.it', 'webank.it'], text: /\b(banco ?bpm|bpm|webank)\b/ },
     { id: 'credem', name: 'Credem', kw: ['credem'], domains: ['credem.it'], text: /\bcredem\b/ },
     { id: 'creditagricole', name: 'Crédit Agricole', kw: ['creditagricole', 'agricole'], domains: ['credit-agricole.it', 'credit-agricole.com'], text: /\bcredit agricole\b/ },
     { id: 'ing', name: 'ING', kw: ['ing'], domains: ['ing.it', 'ing.com'], text: /\bing (direct|bank)\b/ },
     { id: 'hype', name: 'Hype', kw: ['hype'], domains: ['hype.it'], text: /\bhype\b/ },
-    { id: 'n26', name: 'N26', kw: ['n26'], domains: ['n26.com'], text: /\bn26\b/ },
+    { id: 'n26', name: 'N26', kw: ['n26'], domains: ['n26.com', 'n26.it'], text: /\bn26\b/ },
     { id: 'revolut', name: 'Revolut', kw: ['revolut'], domains: ['revolut.com'], text: /\brevolut\b/ },
     { id: 'paypal', name: 'PayPal', kw: ['paypal'], domains: ['paypal.com', 'paypal.it', 'paypal.me', 'paypalobjects.com'], text: /\bpaypal\b/ },
     { id: 'satispay', name: 'Satispay', kw: ['satispay'], domains: ['satispay.com'], text: /\bsatispay\b/ },
-    { id: 'amex', name: 'American Express', kw: ['americanexpress', 'amex'], domains: ['americanexpress.com', 'americanexpress.it'], text: /\b(american express|amex)\b/ },
+    { id: 'amex', name: 'American Express', kw: ['americanexpress', 'amex', 'aexp'], domains: ['americanexpress.com', 'americanexpress.it', 'aexp.com'], text: /\b(american express|amex)\b/ },
     { id: 'inps', name: 'INPS', kw: ['inps'], domains: ['inps.it'], text: /\binps\b/ },
     { id: 'agenziaentrate', name: 'Agenzia delle Entrate', kw: ['agenziaentrate', 'agenziadelleentrate', 'entrate', 'riscossione'], domains: ['agenziaentrate.gov.it', 'agenziaentrateriscossione.gov.it', 'agenziaentrate.it'], text: /\b(agenzia (delle )?entrate|agenziaentrate|riscossione)\b/ },
-    { id: 'pagopa', name: 'PagoPA', kw: ['pagopa'], domains: ['pagopa.gov.it', 'pagopa.it', 'notifichedigitali.it'], text: /\bpago ?pa\b/ },
+    { id: 'pagopa', name: 'PagoPA', kw: ['pagopa'], domains: ['pagopa.gov.it', 'pagopa.it', 'notifichedigitali.it', 'ioapp.it'], text: /\bpago ?pa\b/ },
     { id: 'governo', name: 'Pubblica Amministrazione', kw: ['gov', 'governo', 'ministero', 'spid', 'cie'], domains: ['gov.it', 'italia.it', 'europa.eu'], text: /\b(ministero|governo|app io|spid)\b/ },
     { id: 'telepass', name: 'Telepass', kw: ['telepass'], domains: ['telepass.com', 'telepass.it'], text: /\btelepass\b/ },
-    { id: 'autostrade', name: 'Autostrade per l\'Italia', kw: ['autostrade', 'autostradeperlitalia', 'pedaggi', 'pedaggio'], domains: ['autostrade.it', 'movyon.com', 'freetox.it'], text: /\bautostrade\b/ },
-    { id: 'amazon', name: 'Amazon', kw: ['amazon', 'amzn'], domains: ['amazon.it', 'amazon.com', 'amazon.de', 'amazon.fr', 'amazon.es', 'amazon.co.uk', 'amazon.nl', 'amazon.eu', 'amzn.to', 'amzn.eu', 'primevideo.com', 'media-amazon.com'], text: /\b(amazon|prime video)\b/ },
-    { id: 'apple', name: 'Apple', kw: ['apple', 'icloud', 'itunes', 'appleid'], domains: ['apple.com', 'icloud.com', 'itunes.com'], text: /\b(apple|icloud|itunes|apple ?id)\b/ },
-    { id: 'microsoft', name: 'Microsoft', kw: ['microsoft', 'outlook', 'office365', 'hotmail', 'onedrive'], domains: ['microsoft.com', 'live.com', 'outlook.com', 'office.com', 'hotmail.com', 'hotmail.it', 'onedrive.com', 'microsoftonline.com', 'office365.com'], text: /\b(microsoft|outlook|office ?365|onedrive)\b/ },
-    { id: 'google', name: 'Google', kw: ['google', 'gmail'], domains: ['google.com', 'google.it', 'gmail.com', 'youtube.com', 'youtu.be', 'g.co'], text: /\b(google|gmail)\b/ },
+    { id: 'autostrade', name: 'Autostrade per l\'Italia', kw: ['autostrade', 'autostradeperlitalia', 'pedaggi', 'pedaggio'], domains: ['autostrade.it', 'movyon.com'], text: /\bautostrade\b/ },
+    { id: 'amazon', name: 'Amazon', kw: ['amazon', 'amzn'], domains: ['amazon.it', 'amazon.com', 'amazon.de', 'amazon.fr', 'amazon.es', 'amazon.co.uk', 'amazon.nl', 'amazon.eu', 'amzn.to', 'amzn.eu', 'a.co', 'primevideo.com', 'media-amazon.com'], text: /\b(amazon|prime video)\b/ },
+    { id: 'apple', name: 'Apple', kw: ['apple', 'icloud', 'itunes', 'appleid'], domains: ['apple.com', 'apple.it', 'apple.co', 'icloud.com', 'itunes.com'], text: /\b(apple|icloud|itunes|apple ?id)\b/ },
+    { id: 'microsoft', name: 'Microsoft', kw: ['microsoft', 'outlook', 'office365', 'hotmail', 'onedrive'], domains: ['microsoft.com', 'live.com', 'outlook.com', 'office.com', 'hotmail.com', 'hotmail.it', 'onedrive.com', 'microsoftonline.com', 'office365.com', 'microsoft365.com', 'cloud.microsoft', 'aka.ms'], text: /\b(microsoft|outlook|office ?365|onedrive)\b/ },
+    { id: 'google', name: 'Google', kw: ['google', 'gmail'], domains: ['google.com', 'google.it', 'gmail.com', 'youtube.com', 'youtu.be', 'g.co', 'goo.gle'], text: /\b(google|gmail)\b/ },
     { id: 'netflix', name: 'Netflix', kw: ['netflix'], domains: ['netflix.com'], text: /\bnetflix\b/ },
     { id: 'disney', name: 'Disney+', kw: ['disneyplus', 'disney'], domains: ['disneyplus.com', 'disney.it', 'disney.com'], text: /\bdisney\b/ },
-    { id: 'spotify', name: 'Spotify', kw: ['spotify'], domains: ['spotify.com'], text: /\bspotify\b/ },
+    { id: 'spotify', name: 'Spotify', kw: ['spotify'], domains: ['spotify.com', 'spoti.fi', 'spotify.link'], text: /\bspotify\b/ },
     { id: 'dazn', name: 'DAZN', kw: ['dazn'], domains: ['dazn.com'], text: /\bdazn\b/ },
     { id: 'sky', name: 'Sky', kw: ['sky'], domains: ['sky.it', 'sky.com'], text: /\bsky (tv|wifi|glass|go)\b/ },
     { id: 'whatsapp', name: 'WhatsApp', kw: ['whatsapp'], domains: ['whatsapp.com', 'whatsapp.net', 'wa.me'], text: null },
-    { id: 'meta', name: 'Facebook/Instagram', kw: ['facebook', 'instagram', 'meta'], domains: ['facebook.com', 'fb.com', 'fb.me', 'instagram.com', 'meta.com', 'messenger.com'], text: null },
+    { id: 'meta', name: 'Facebook/Instagram', kw: ['facebook', 'instagram', 'meta'], domains: ['facebook.com', 'fb.com', 'fb.me', 'instagram.com', 'instagr.am', 'meta.com', 'messenger.com', 'facebookmail.com'], text: null },
     { id: 'dhl', name: 'DHL', kw: ['dhl'], domains: ['dhl.com', 'dhl.it', 'dhl.de'], text: /\bdhl\b/ },
     { id: 'brt', name: 'BRT', kw: ['brt', 'bartolini', 'mybrt'], domains: ['brt.it', 'mybrt.it'], text: /\b(brt|bartolini)\b/ },
     { id: 'gls', name: 'GLS', kw: ['gls'], domains: ['gls-italy.com', 'gls-group.com', 'gls-group.eu'], text: /\bgls\b/ },
     { id: 'sda', name: 'SDA', kw: ['sda'], domains: ['sda.it'], text: /\bsda\b/ },
     { id: 'inpost', name: 'InPost', kw: ['inpost'], domains: ['inpost.it', 'inpost.eu', 'inpost.pl'], text: /\binpost\b/ },
-    { id: 'ups', name: 'UPS', kw: ['ups'], domains: ['ups.com'], text: null },
-    { id: 'fedex', name: 'FedEx', kw: ['fedex'], domains: ['fedex.com'], text: /\bfedex\b/ },
+    { id: 'ups', name: 'UPS', kw: ['ups'], domains: ['ups.com', 'ups.it'], text: null },
+    { id: 'fedex', name: 'FedEx', kw: ['fedex'], domains: ['fedex.com', 'fedex.it'], text: /\bfedex\b/ },
     { id: 'tnt', name: 'TNT', kw: ['tnt'], domains: ['tnt.it', 'tnt.com'], text: /\btnt\b/ },
     { id: 'enel', name: 'Enel', kw: ['enel', 'enelenergia'], domains: ['enel.it', 'enel.com', 'enelx.com'], text: /\benel\b/ },
     { id: 'eni', name: 'Eni Plenitude', kw: ['plenitude', 'eniplenitude'], domains: ['eniplenitude.com', 'eni.com'], text: /\b(eni plenitude|plenitude)\b/ },
     { id: 'tim', name: 'TIM', kw: ['tim', 'telecomitalia'], domains: ['tim.it', 'telecomitalia.it', 'gruppotim.it', 'timvision.it'], text: /\btim\b/ },
     { id: 'vodafone', name: 'Vodafone', kw: ['vodafone'], domains: ['vodafone.it', 'vodafone.com'], text: /\bvodafone\b/ },
-    { id: 'windtre', name: 'WindTre', kw: ['windtre'], domains: ['windtre.it', 'wind.it', 'tre.it'], text: /\bwind ?tre\b/ },
+    { id: 'windtre', name: 'WindTre', kw: ['windtre'], domains: ['windtre.it', 'wind.it', 'tre.it', 'verymobile.it'], text: /\bwind ?tre\b/ },
     { id: 'iliad', name: 'Iliad', kw: ['iliad'], domains: ['iliad.it'], text: /\biliad\b/ },
     { id: 'fastweb', name: 'Fastweb', kw: ['fastweb'], domains: ['fastweb.it'], text: /\bfastweb\b/ },
-    { id: 'trenitalia', name: 'Trenitalia', kw: ['trenitalia'], domains: ['trenitalia.com'], text: /\btrenitalia\b/ },
+    { id: 'trenitalia', name: 'Trenitalia', kw: ['trenitalia', 'lefrecce'], domains: ['trenitalia.com', 'trenitalia.it', 'lefrecce.it'], text: /\btrenitalia\b/ },
     { id: 'italo', name: 'Italo', kw: ['italotreno'], domains: ['italotreno.it', 'italotreno.com'], text: null },
     { id: 'ebay', name: 'eBay', kw: ['ebay'], domains: ['ebay.it', 'ebay.com'], text: /\bebay\b/ },
     { id: 'subito', name: 'Subito', kw: ['subito'], domains: ['subito.it'], text: /\bsubito\.it\b/ },
     { id: 'vinted', name: 'Vinted', kw: ['vinted'], domains: ['vinted.it', 'vinted.com'], text: /\bvinted\b/ },
     { id: 'booking', name: 'Booking.com', kw: ['booking'], domains: ['booking.com'], text: /\bbooking\b/ },
-    { id: 'aruba', name: 'Aruba', kw: ['aruba'], domains: ['aruba.it', 'pec.it'], text: /\baruba\b/ },
+    { id: 'aruba', name: 'Aruba', kw: ['aruba'], domains: ['aruba.it', 'pec.it', 'arubapec.it'], text: /\baruba\b/ },
     { id: 'findomestic', name: 'Findomestic', kw: ['findomestic'], domains: ['findomestic.it'], text: /\bfindomestic\b/ },
     { id: 'polizia', name: 'Polizia di Stato', kw: ['poliziadistato', 'poliziapostale', 'commissariatodips', 'polizia', 'carabinieri', 'guardiadifinanza', 'gdf'], domains: ['poliziadistato.it', 'commissariatodips.it', 'carabinieri.it', 'gdf.gov.it', 'interno.gov.it'], text: /\b(polizia (di stato|postale)|carabinieri|guardia di finanza)\b/ }
   ];
 
   /** Parole chiave corte o comuni: valgono solo come parola intera del dominio. */
-  var STRICT_KW = { bnl: 1, mps: 1, bper: 1, ing: 1, hype: 1, n26: 1, amex: 1, inps: 1, entrate: 1, riscossione: 1, gov: 1, governo: 1, ministero: 1, spid: 1, cie: 1, dhl: 1, brt: 1, gls: 1, sda: 1, ups: 1, tnt: 1, enel: 1, tim: 1, sky: 1, meta: 1, subito: 1, booking: 1, aruba: 1, polizia: 1, gdf: 1, nexi: 1, amzn: 1, dazn: 1, credem: 1, bpm: 1, webank: 1, agricole: 1, apple: 1, pedaggi: 1, pedaggio: 1, sanpaolo: 1, intesa: 1, outlook: 1, hotmail: 1 };
+  var STRICT_KW = { aexp: 1, bnl: 1, mps: 1, bper: 1, ing: 1, hype: 1, n26: 1, amex: 1, inps: 1, entrate: 1, riscossione: 1, gov: 1, governo: 1, ministero: 1, spid: 1, cie: 1, dhl: 1, brt: 1, gls: 1, sda: 1, ups: 1, tnt: 1, enel: 1, tim: 1, sky: 1, meta: 1, subito: 1, booking: 1, aruba: 1, polizia: 1, gdf: 1, nexi: 1, amzn: 1, dazn: 1, credem: 1, bpm: 1, webank: 1, agricole: 1, apple: 1, pedaggi: 1, pedaggio: 1, sanpaolo: 1, intesa: 1, outlook: 1, hotmail: 1 };
 
   /** Altri domini molto diffusi e sicuri come destinazione (non sono marchi imitati di solito). */
   var OTHER_OFFICIAL = ['commissariatodips.it', 'garanteprivacy.it', 'agcom.it', 'consob.it', 'bancaditalia.it',
@@ -421,6 +421,16 @@
     'live.com', 'live.it', 'yahoo.com', 'yahoo.it', 'virgilio.it', 'tiscali.it', 'alice.it', 'tim.it', 'email.it',
     'inwind.it', 'iol.it', 'aol.com', 'icloud.com', 'me.com', 'proton.me', 'protonmail.com', 'gmx.com', 'gmx.it',
     'mail.com', 'mail.ru', 'yandex.com', 'yandex.ru', 'tutanota.com', 'zoho.com', 'fastwebnet.it', 'msn.com'];
+
+  /**
+   * Domini di caselle PEC vendute a chiunque: il sito (www.pec.it) è di Aruba, ma un indirizzo
+   * qualcuno@pec.it è la casella di un cliente qualsiasi, non di Aruba. Per le email valgono come FREEMAIL.
+   */
+  var SHARED_MAILBOX = ['pec.it'];
+
+  function isPersonalMailbox(domain) {
+    return FREEMAIL.indexOf(domain) >= 0 || SHARED_MAILBOX.indexOf(domain) >= 0;
+  }
 
   /** Lunghezze IBAN per paese (registro SWIFT). */
   var IBAN_LENGTHS = {
@@ -772,9 +782,12 @@
       if (endsWithDomain(host, USER_CONTENT[u])) return null;
     }
     if (personalLink(host)) return null;
+    // vince il dominio più specifico (gdf.gov.it prima di gov.it)
+    var best = null;
     for (var i = 0; i < OFFICIAL_INDEX.length; i++) {
-      if (endsWithDomain(host, OFFICIAL_INDEX[i].domain)) return OFFICIAL_INDEX[i];
+      if (endsWithDomain(host, OFFICIAL_INDEX[i].domain) && (!best || OFFICIAL_INDEX[i].domain.length > best.domain.length)) best = OFFICIAL_INDEX[i];
     }
+    if (best) return best;
     if (/\.gov\.it$/.test(host) || /\.gov$/.test(host) || /\.gov\.[a-z]{2}$/.test(host)) {
       return { domain: host, brand: BRAND_BY_ID.governo };
     }
@@ -1049,20 +1062,22 @@
     var addr = refang(raw).toLowerCase();
     var domain = addr.slice(addr.lastIndexOf('@') + 1);
     var signals = [];
-    var off = FREEMAIL.indexOf(domain) >= 0 ? null : officialMatch(domain);
+    var personal = isPersonalMailbox(domain);
+    var pec = SHARED_MAILBOX.indexOf(domain) >= 0;
+    var off = personal ? null : officialMatch(domain);
     var ev = raw;
-    if (FREEMAIL.indexOf(domain) >= 0 && !(ctx && ctx.brandMentioned)) {
-      signals.push(sig('email_freemail', 'Casella email personale', '@' + domain + ' è un servizio di posta gratuito: chiunque può creare un indirizzo così. Va bene per privati, non per banche, enti o aziende.', 0, 'info', ev));
+    if (personal && !(ctx && ctx.brandMentioned)) {
+      signals.push(sig('email_freemail', 'Casella email personale', '@' + domain + (pec ? ' è un servizio di caselle PEC venduto a chiunque: l\'indirizzo è di un cliente qualsiasi, non di Aruba.' : ' è un servizio di posta gratuito: chiunque può creare un indirizzo così.') + ' Va bene per privati, non per banche, enti o aziende.', 0, 'info', ev));
     }
     if (off) {
       signals.push(sig('email_official', 'Dominio email ufficiale', '@' + domain + ' è un dominio ufficiale' + (off.brand ? ' di ' + off.brand.name : '') + '. Attenzione: il mittente di un\'email può essere falsificato, controlla sempre i link.', 10, 'info', ev));
     } else {
-      var look = checkBrandLookalike(domain);
+      var look = personal ? null : checkBrandLookalike(domain);
       if (look) {
         signals.push(sig('email_lookalike', 'Email che imita ' + look.brand.name, 'Il dominio @' + domain + ' imita ' + look.brand.name + ' ma non è ufficiale (il vero è ' + look.brand.domains[0] + ').', look.how === 'other_tld' ? -15 : -30, 'high', ev));
       }
-      if (FREEMAIL.indexOf(domain) >= 0 && ctx && ctx.brandMentioned) {
-        signals.push(sig('email_freemail_impersonation', 'Casella email personale', 'Il messaggio parla a nome di un\'azienda o di un ente ma usa un indirizzo gratuito (@' + domain + '): banche, enti e forze dell\'ordine non scrivono da caselle Gmail, Libero, Outlook e simili.', -15, 'medium', ev));
+      if (personal && ctx && ctx.brandMentioned) {
+        signals.push(sig('email_freemail_impersonation', 'Casella email personale', 'Il messaggio parla a nome di un\'azienda o di un ente ma usa un indirizzo personale (@' + domain + '): banche, enti e forze dell\'ordine non scrivono da caselle Gmail, Libero, Outlook, PEC generiche e simili.', -15, 'medium', ev));
       }
       var tld = domain.split('.').pop();
       if (SUSPICIOUS_TLDS.indexOf(tld) >= 0) {

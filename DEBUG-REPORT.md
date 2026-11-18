@@ -76,6 +76,8 @@ Verificato e **senza problemi**:
 
 ## Dubbi sulla lista BRANDS (domini ufficiali)
 
+> **Aggiornamento 18/11/2026:** tutti i domini della lista sono stati verificati uno per uno in `docs/BRANDS-VERIFICA.md` (certificati dai log CT, redirect, P.IVA, DNS, RDAP). Esiti dei dubbi qui sotto: `agenziaentrate.it`, `fineco.it`, `italotreno.com`, `tnt.it`, `unicredit.eu`, `intesasanpaolo.it`, `posteitaliane.it`, `sky.com` e `movyon.com` confermati; `freetox.it` rimosso (inattivo); email `@pec.it` ora trattate come caselle personali; `apple.it`, `n26.it` aggiunti; `fineco.com` (di terzi), `satispay.it`, `booking.it`, `microsoftstore.it`, `unicreditbank.it` non aggiunti.
+
 Domini che non sono riuscito a confermare con certezza o che meritano attenzione. Prima di toccarli conviene verificarli a mano:
 
 - `agenziaentrate.it`: il sito vero è `agenziaentrate.gov.it`. Non so se il `.it` senza `gov` sia dell'Agenzia (forse un vecchio redirect). Se non lo è, è un rischio, perché oggi risulta «ufficiale».

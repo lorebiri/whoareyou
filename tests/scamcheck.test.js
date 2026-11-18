@@ -543,6 +543,103 @@ test('debug: finto acquirente su Subito/Vinted che manda il link per "ricevere i
 });
 
 /* ======================================================================
+ * Verifica dei domini ufficiali (docs/BRANDS-VERIFICA.md)
+ * ====================================================================== */
+console.log('\nVerifica domini ufficiali');
+
+var PERSONAL = ['paypal.me', 'wa.me'];
+
+test('verifica: ogni dominio della lista BRANDS è ufficiale e mai sosia (anche con www e sottodominio)', function () {
+  I.BRANDS.forEach(function (b) {
+    b.domains.forEach(function (d) {
+      if (PERSONAL.indexOf(d) >= 0) return;
+      [d, 'www.' + d, 'login.' + d].forEach(function (h) {
+        var a = I.analyzeUrl('https://' + h + '/');
+        assert.ok(a.official, h + ' (' + b.name + ') non riconosciuto come ufficiale');
+        assert.strictEqual(a.official.brand, b.id, h + ' attribuito al marchio sbagliato');
+        assert.strictEqual(a.lookalike, null, h + ' segnalato come sosia');
+        assert.strictEqual(a.risk, 'basso', h);
+      });
+    });
+  });
+});
+
+test('verifica: domini aggiunti nella verifica del 18/11/2026 sono in lista', function () {
+  var added = {
+    poste: ['postevita.it', 'poste-assicura.it'], intesa: ['isybank.it'],
+    mediolanum: ['mediolanum.it'], n26: ['n26.it'], amex: ['aexp.com'], pagopa: ['ioapp.it'], amazon: ['a.co'],
+    apple: ['apple.it', 'apple.co'], microsoft: ['microsoft365.com', 'cloud.microsoft', 'aka.ms'], google: ['goo.gle'],
+    spotify: ['spoti.fi', 'spotify.link'], meta: ['instagr.am', 'facebookmail.com'], ups: ['ups.it'], fedex: ['fedex.it'],
+    windtre: ['verymobile.it'], trenitalia: ['trenitalia.it', 'lefrecce.it'], aruba: ['arubapec.it']
+  };
+  Object.keys(added).forEach(function (id) {
+    var b = I.BRANDS.filter(function (x) { return x.id === id; })[0];
+    added[id].forEach(function (d) { assert.ok(b.domains.indexOf(d) >= 0, d + ' manca in ' + id); });
+  });
+});
+
+test('verifica: messaggi legittimi con domini ufficiali (anche nuovi) non danno allarme', function () {
+  [
+    'Poste Italiane: il tuo pacco è in consegna oggi. Segui la spedizione su https://www.poste.it/cerca/index.html#/risultati-spedizioni/ABC123',
+    'Poste Vita: è disponibile il nuovo estratto conto della tua polizza nell\'area riservata https://www.postevita.it',
+    'Poste Assicura: scopri la nuova copertura casa su https://www.poste-assicura.it',
+    'Hai un nuovo messaggio nell\'app IO da parte del tuo Comune. Scarica l\'app da https://ioapp.it/',
+    'Il tuo ordine Amazon è stato spedito. Traccia il pacco: https://a.co/d/7xYz123',
+    'Guarda cosa ho trovato su Amazon: https://amzn.eu/d/abc123',
+    'Microsoft: per completare la configurazione scarica Authenticator da https://aka.ms/authapp',
+    'Accedi alla tua posta da https://outlook.cloud.microsoft/mail/ o da https://www.microsoft365.com/',
+    'Ascolta la mia playlist su Spotify: https://spoti.fi/3abcXYZ oppure https://spotify.link/AbCdEf',
+    'Ti ho condiviso un video: https://goo.gle/3xyz e https://youtu.be/dQw4w9WgXcQ',
+    'Trenitalia: il tuo biglietto Frecciarossa per Milano è confermato. Dettagli su https://www.lefrecce.it/Channels.Website.WEB/',
+    'Apple: il tuo ordine è in preparazione. Controlla lo stato su https://www.apple.com/it/shop/order/list o https://apple.co/3abc',
+    'FedEx: la spedizione 123456789012 sarà consegnata domani. Dettagli: https://www.fedex.com/fedextrack/?trknbr=123456789012',
+    'UPS: il pacco 1Z999AA10123456784 arriverà oggi. https://www.ups.com/track?tracknum=1Z999AA10123456784',
+    'American Express: il tuo estratto conto è disponibile. Accedi su https://www.americanexpress.com/it-it/',
+    'Very Mobile: la tua offerta si rinnova il 3 dicembre. Dettagli su https://verymobile.it',
+    'Instagram: qualcuno ha commentato la tua foto https://instagr.am/p/abc123',
+    'Aruba PEC: la tua casella è stata attivata. Gestiscila da https://www.arubapec.it/',
+    'Banca Mediolanum: il nuovo documento di sintesi è disponibile su https://www.mediolanum.it'
+  ].forEach(function (t) {
+    var r = S.analyzeText(t);
+    assert.ok(r.verdict === 'affidabile' || r.verdict === 'neutro', t + ' -> ' + r.verdict + ' ' + ids(r.signals).join(','));
+    r.entities.urls.forEach(function (u) { assert.ok(u.official, u.raw + ' non ufficiale'); });
+  });
+});
+
+test('verifica: sosia dei marchi danno allarme', function () {
+  ['poste-it.com', 'poste-verifica.net', 'postevita-verifica.com', 'gls-info.com', 'sda-it.com', 'trenitalia-rimborso.com',
+    'lefrecce.it.rimborso-biglietti.com', 'spotify-link.net', 'unicreditbank-sicurezza.com', 'aexp-verifica.com'].forEach(function (h) {
+    var a = I.analyzeUrl('https://' + h + '/login');
+    assert.strictEqual(a.official, null, h + ' ufficiale per errore');
+    assert.ok(a.lookalike, h + ' non riconosciuto come sosia');
+    assert.strictEqual(a.risk, 'alto', h + ' rischio ' + a.risk);
+  });
+  [
+    'Poste Italiane: il tuo pacco è in giacenza. Paga 1,99 euro per la riconsegna: https://poste-it.com/pacco',
+    'Poste Italiane: il tuo conto BancoPosta è stato bloccato. Verifica subito i tuoi dati su poste-verifica.net',
+    'GLS: la consegna non è riuscita, aggiorna l\'indirizzo entro 24 ore: https://gls-info.com/it/track'
+  ].forEach(function (t) {
+    var r = S.analyzeText(t);
+    assert.ok(r.verdict === 'sospetto' || r.verdict === 'pericoloso', t + ' -> ' + r.verdict);
+  });
+});
+
+test('verifica: domini rimossi o di terzi non sono ufficiali', function () {
+  // freetox.it: senza sito né posta; fineco.com, bper.com, amex.it: registrati da terzi
+  ['freetox.it', 'fineco.com', 'bper.com', 'amex.it', 'bnlpositivity.it', 'satispay.it', 'booking.it', 'unicreditbank.it'].forEach(function (h) {
+    assert.strictEqual(I.analyzeUrl('https://' + h + '/').official, null, h);
+  });
+});
+
+test('verifica: email @pec.it è una casella di un cliente qualsiasi, non di Aruba', function () {
+  var r = S.analyzeText('Aruba: la tua casella PEC sta per scadere, rinnova da questo indirizzo: rinnovi.aruba@pec.it');
+  assert.strictEqual(ids(r.signals).indexOf('email_official'), -1);
+  assert.ok(ids(r.signals).indexOf('email_freemail_impersonation') >= 0, ids(r.signals).join(','));
+  assert.ok(S.analyzeText('https://www.pec.it/').entities.urls[0].official, 'il sito www.pec.it resta ufficiale');
+  assert.ok(ids(S.analyzeText('Scrivi a assistenza@arubapec.it').signals).indexOf('email_official') >= 0);
+});
+
+/* ======================================================================
  * Riepilogo
  * ====================================================================== */
 pending.reduce(function (p, f) { return p.then(f); }, Promise.resolve()).then(function () {
